@@ -1,0 +1,14 @@
+emacs.d/
+/.abbrev_defs
+recentf
+smex-items
+srecode-map.el
+company-statistics-cache.el
+emacs-custom.el
+places
+*.elc
+*.eld
+/eshell/history
+/eshell/lastdir
+/elpa
+/quelpa
