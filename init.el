@@ -385,6 +385,7 @@ _p_: prev    _r_: reverse
 
   (setq ivy-use-virtual-buffers t)
   (setq ivy-height 10)
+  (setq ivy-height-alist nil)
   (setq ivy-count-format "(%d/%d) ")
   (setq ivy-initial-inputs-alist nil)
   ;; from https://github.com/company-mode/company-statistics
@@ -519,10 +520,21 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
 ;;   (sp-local-pair 'web-mode "{# "  " #}")
  )
 
+(use-package smooth-scrolling :ensure t
+  :config
+  (smooth-scrolling-mode)
+  (setq smooth-scroll-margin 5))
 
 (use-package smyx-theme
   :ensure t
   )
+
+(use-package swiper :ensure t
+  :bind* (("M-s" . swiper)
+          ("M-S" . swiper-all)
+          :map swiper-map
+          ("C-s" . ivy-previous-history-element)
+          ("C-t" . ivy-yank-word)))
 
 ;; ---------- T --------------------------------------------------
 (use-package tex
