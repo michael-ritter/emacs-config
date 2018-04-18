@@ -1,4 +1,5 @@
 ;; -*- emacs-lisp -*-
+;; inspired by https://github.com/sam217pa/emacs-config
 
 ;; ---------- bootstrapping --------------------------------------------------
 (require 'package)
@@ -100,6 +101,249 @@
 
 ;; ---------- B --------------------------------------------------
 ;; ---------- C --------------------------------------------------
+(use-package company :ensure t
+  :diminish ""
+  :commands global-company-mode
+  :init
+  (add-hook 'after-init-hook #'global-company-mode)
+  (setq
+   company-idle-delay 0.2
+   company-selection-wrap-around t
+   company-minimum-prefix-length 2
+   company-require-match nil
+   company-dabbrev-ignore-case nil
+   company-dabbrev-downcase nil
+   company-show-numbers t)
+
+  :config
+  (global-company-mode)
+
+  (use-package company-statistics
+    :quelpa (company-statistics :fetcher github :repo "company-mode/company-statistics")
+    :config
+    (company-statistics-mode))
+
+  (bind-keys :map company-active-map
+    ("C-d" . company-show-doc-buffer)
+    ("C-l" . company-show-location)
+    ("C-n" . company-select-next)
+    ("C-p" . company-select-previous)
+    ("C-t" . company-select-next)
+    ("C-s" . company-select-previous)
+    ("TAB" . company-complete))
+
+  (setq company-backends
+        '((company-css
+           company-clang
+           company-capf
+           company-semantic
+           company-xcode
+           company-cmake
+           company-files
+           company-gtags
+           company-etags
+           company-keywords)))
+
+  ;; from https://github.com/syl20bnr/spacemacs/blob/master/layers/auto-completion/packages.el
+  (setq hippie-expand-try-functions-list
+        '(
+          ;; Try to expand word "dynamically", searching the current buffer.
+          try-expand-dabbrev
+          ;; Try to expand word "dynamically", searching all other buffers.
+          try-expand-dabbrev-all-buffers
+          ;; Try to expand word "dynamically", searching the kill ring.
+          try-expand-dabbrev-from-kill
+          ;; Try to complete text as a file name, as many characters as unique.
+          try-complete-file-name-partially
+          ;; Try to complete text as a file name.
+          try-complete-file-name
+          ;; Try to expand word before point according to all abbrev tables.
+          try-expand-all-abbrevs
+          ;; Try to complete the current line to an entire line in the buffer.
+          try-expand-list
+          ;; Try to complete the current line to an entire line in the buffer.
+          try-expand-line
+          ;; Try to complete as an Emacs Lisp symbol, as many characters as
+          ;; unique.
+          try-complete-lisp-symbol-partially
+          ;; Try to complete word as an Emacs Lisp symbol.
+          try-complete-lisp-symbol)))
+
+  (use-package counsel :ensure t
+  :bind*
+  (("M-x"     . counsel-M-x)
+   ("C-x C-f" . counsel-find-file)
+   ("C-c f"   . counsel-git)
+   ("C-c s"   . counsel-git-grep)
+   ("C-c /"   . counsel-ag)
+   ("C-c o"   . counsel-find-file-extern)
+   ("C-S-s"   . counsel-ag)
+   ("C-c l"   . counsel-locate))
+  :config
+  (setq counsel-find-file-at-point t)
+  (setq counsel-locate-cmd 'counsel-locate-cmd-mdfind)
+  (setq counsel-find-file-ignore-regexp "\\.DS_Store\\|.git")
+
+  ;; from http://blog.binchen.org/posts/use-ivy-mode-to-search-bash-history.html
+  (defun counsel-yank-bash-history ()
+    "Yank the bash history"
+    (interactive)
+    (let (hist-cmd collection val)
+      (shell-command "history -r")      ; reload history
+      (setq collection
+            (nreverse
+             (split-string (with-temp-buffer (insert-file-contents (file-truename "~/.bash_history"))
+                                             (buffer-string))
+                           "\n"
+                           t)))
+      (when (and collection (> (length collection) 0)
+                 (setq val (if (= 1 (length collection)) (car collection)
+                             (ivy-read (format "Bash history:") collection))))
+        (insert val)
+        (message "%s => kill-ring" val))))
+
+  ;; TODO make the function respects reverse order of file
+  (defun counsel-yank-zsh-history ()
+    "Yank the zsh history"
+    (interactive)
+    (let (hist-cmd collection val)
+      (shell-command "history -r")      ; reload history
+      (setq collection
+            (nreverse
+             (split-string (with-temp-buffer (insert-file-contents (file-truename "~/.zhistory"))
+                                             (buffer-string))
+                           "\n"
+                           t)))
+      (setq collection (mapcar (lambda (it) (replace-regexp-in-string ".*;" "" it)) collection))
+      (when (and collection (> (length collection) 0)
+                 (setq val (if (= 1 (length collection)) (car collection)
+                             (ivy-read (format "Zsh history:") collection :re-builder #'ivy--regex-ignore-order))))
+        (kill-new val)
+        (insert val)
+        (message "%s => kill-ring" val))))
+
+  (defun counsel-package-install ()
+    (interactive)
+    (ivy-read "Install package: "
+              (delq nil
+                    (mapcar (lambda (elt)
+                              (unless (package-installed-p (car elt))
+                                (symbol-name (car elt))))
+                            package-archive-contents))
+              :action (lambda (x)
+                        (package-install (intern x)))
+              :caller 'counsel-package-install))
+  (ivy-set-actions
+   'counsel-find-file
+   '(("o" (lambda (x) (counsel-find-file-extern x)) "open extern"))))
+
+(use-package counsel-osx-app :ensure t
+  :commands counsel-osx-app
+  :bind*
+  ("C-c a" . counsel-osx-app)
+  :config
+  (setq counsel-osx-app-location
+        '("/Applications/" "~/Applications/")))
+
+(use-package counsel-projectile :ensure t
+  :bind* (("H-P" . counsel-projectile-switch-to-buffer)
+          ("H-p" . counsel-projectile))
+  :config
+  (counsel-projectile-on))
+
+(use-package counsel-gtags :ensure t
+  :defer t)
+
+(use-package css-mode :ensure t
+  :mode (("\\.css\\'" . css-mode)))
+
+(use-package csv-mode :ensure t
+  :mode (("\\.csv\\'" . csv-mode))
+  :bind (:map csv-mode-map
+         ("'" . hydra-csv/body))
+  :defines hydra-csv/body
+  :config
+  (defhydra hydra-csv (:hint nil :color amaranth)
+    "
+^NAV^        ^TRANSFORM^      ^ALIGN^         ^TOGGLE^         ^YANK^
+_f_: fwd     _s_: sort        _a_: align      _d_: desc        _k_: kill
+_b_: bwd     _S_: sort num    _A_: unalign    _T_: invisible   _y_: yank
+_n_: next    _t_: transpose   ^ ^             ^ ^              _Y_: yank as new table
+_p_: prev    _r_: reverse
+"
+    ("f" csv-forward-field)
+    ("b" csv-backward-field)
+    ("n" next-line)
+    ("p" previous-line)
+    ("t" csv-transpose)
+    ("s" csv-sort-fields)
+    ("S" csv-sort-numeric-fields)
+    ("a" csv-align-fields)
+    ("A" csv-unalign-fields)
+    ("r" csv-reverse-region)
+    ("d" csv-toggle-descending)
+    ("T" csv-toggle-invisibility)
+    ("k" csv-kill-fields)
+    ("y" csv-yank-fields)
+    ("Y" csv-yank-as-new-table)
+    ("u" undo "undo")
+    ("q" nil "quit" :color blue))
+
+  (setq csv-invisibility-default nil)
+
+  (defun csv--align-buffer ()
+    (save-excursion
+      (csv-align-fields t (point-min) (point-max))))
+
+  (defun csv--next-or-new-field ()
+    (cond ((looking-at ",$")
+           (forward-char 1)
+           (save-excursion (insert ",")))
+          ((eq (point) (point-at-eol))
+           (insert ","))
+          (t
+           (unless (re-search-forward "," nil t)
+             (end-of-line))))
+    (csv--align-buffer))
+
+  (defun csv-tab-to-next-field ()
+    (interactive)
+    (if (or (mapcar #'looking-at csv-separators))
+        (csv--next-or-new-field)
+      (yas-expand)))
+
+  (defun csv--previous-field ()
+    (re-search-backward "," nil t))
+
+  (defun csv-backtab-to-previous-field ()
+    (interactive)
+    (when (or (mapcar #'looking-at csv-separators))
+      (csv--previous-field)))
+
+  (defun csv--new-line-or-next-field ()
+    (cond ((and (looking-back "," (- (point) 2))
+                (eq (point) (point-at-eol)))
+           (delete-char -1)
+           (unless (re-search-forward "," nil t)
+             (newline)))
+          (t
+           (if (eq (point) (point-max))
+               (newline)
+             (next-line))))
+    (csv--align-buffer))
+
+  (defun csv-new-line-or-next-field ()
+    (interactive)
+    (when (mapcar #'looking-at csv-separators)
+      (csv--new-line-or-next-field)))
+
+  (general-define-key
+   :keymaps 'csv-mode-map
+    "<tab>" 'csv-tab-to-next-field
+    "<backtab>" 'csv-backtab-to-previous-field
+    "RET" 'csv-new-line-or-next-field))
+
+
 ;; ---------- D --------------------------------------------------
 ;; ---------- E --------------------------------------------------
 ;; ---------- F --------------------------------------------------
@@ -124,6 +368,12 @@
   (setq hydra-is-helpful t))
 
 ;; ---------- I --------------------------------------------------
+(use-package ido
+  :defer t
+  :config
+  (general-define-key :keymaps 'ido-completion-map
+    "C-n" 'ido-next-match
+    "C-p" 'ido-prev-match))
 
 (use-package ivy
   :quelpa (ivy :fetcher github :repo "abo-abo/swiper")
@@ -135,6 +385,7 @@
 
   (setq ivy-use-virtual-buffers t)
   (setq ivy-height 10)
+  (setq ivy-height-alist nil)
   (setq ivy-count-format "(%d/%d) ")
   (setq ivy-initial-inputs-alist nil)
   ;; from https://github.com/company-mode/company-statistics
@@ -270,10 +521,21 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
 ;;   (sp-local-pair 'web-mode "{# "  " #}")
  )
 
+(use-package smooth-scrolling :ensure t
+  :config
+  (smooth-scrolling-mode)
+  (setq smooth-scroll-margin 5))
 
 (use-package smyx-theme
   :ensure t
   )
+
+(use-package swiper :ensure t
+  :bind* (("M-s" . swiper)
+          ("M-S" . swiper-all)
+          :map swiper-map
+          ("C-s" . ivy-previous-history-element)
+          ("C-t" . ivy-yank-word)))
 
 ;; ---------- T --------------------------------------------------
 (use-package tex
