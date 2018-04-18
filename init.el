@@ -144,7 +144,8 @@
   ;; if ivy-flip is t, presents results on top of query.
   (setq ivy-flip t)
   (setq ivy-overlay-at nil)
-  (setq ivy-re-builders-alist '((t      . ivy--regex-ignore-order)))
+                                        ;  (setq ivy-re-builders-alist '((t      . ivy--regex-ignore-order)))
+    (setq ivy-re-builders-alist '((t      . ivy--regex-fuzzy)))
 
   (defun ivy--matcher-desc ()
     (if (eq ivy--regex-function
