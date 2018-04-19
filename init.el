@@ -542,9 +542,15 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
   :ensure auctex
   :config
   (setq TeX-auto-save t)
-  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-  (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
-  (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
+  (add-hook 'LaTeX-mode-hook (lambda ()
+              ;                 (rainbow-delimiters-mode)
+                               (turn-on-reftex)
+                               (turn-on-visual-line-mode)
+                               (setq TeX-source-correlate-mode t)
+                               (setq TeX-PDF-mode-parsed t)
+                               )
+            )
+  :bind (("C-c C-ö" . next-error))
 )
 ;; ---------- U --------------------------------------------------
 ;; ---------- V --------------------------------------------------
