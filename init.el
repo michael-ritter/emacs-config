@@ -560,6 +560,12 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
   (load-theme 'apropospriate-light t)
   )
 
+;;; global keys
+(global-set-key (kbd "C->") 'end-of-buffer)
+(global-set-key (kbd "C-<") 'beginning-of-buffer)
+(global-set-key (kbd "M->") 'end-of-buffer)
+(global-set-key (kbd "M-<") 'beginning-of-buffer)
+
 ;;; custom
 (setq custom-file "~/.emacs.d/emacs-custom.el")
 (load custom-file)
