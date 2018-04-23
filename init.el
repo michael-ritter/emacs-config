@@ -473,6 +473,41 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
   (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 0)))
 )
 
+(use-package multiple-cursors
+  :ensure t
+  :bind*
+  (("M-s-s" . mc/mark-previous-like-this)
+   ("M-s-t" . mc/mark-next-like-this)
+   ("M-s-S" . mc/unmark-next-like-this)
+   ("M-s-T" . mc/unmark-previous-like-this))
+  :commands
+  (hydra-mc/mc/mark-previous-like-this
+   hydra-mc/mc/mark-next-like-this)
+  :config
+
+  ;; from https://github.com/abo-abo/hydra/wiki/multiple-cursors
+  (defhydra hydra-mc (:hint nil)
+    "
+     ^Up^            ^Down^        ^Other^
+----------------------------------------------
+[_p_]   Next    [_n_]   Next    [_l_] Edit lines
+[_P_]   Skip    [_N_]   Skip    [_a_] Mark all
+[_M-p_] Unmark  [_M-n_] Unmark  [_r_] Mark by regexp
+^ ^             ^ ^             [_q_] Quit
+"
+    ("l" mc/edit-lines :exit t)
+    ("a" mc/mark-all-like-this :exit t)
+    ("n" mc/mark-next-like-this)
+    ("N" mc/skip-to-next-like-this)
+    ("M-p" mc/unmark-next-like-this)
+    ("p" mc/mark-previous-like-this)
+    ("P" mc/skip-to-previous-like-this)
+    ("M-n" mc/unmark-previous-like-this)
+    ("r" mc/mark-all-in-region-regexp :exit t)
+    ("q" nil :color blue)
+    (" " nil "quit" :color blue)))
+
+
 ;; ---------- N --------------------------------------------------
 
 ;; (use-package nlinum
