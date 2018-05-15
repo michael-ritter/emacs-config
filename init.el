@@ -5,8 +5,8 @@
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -466,6 +466,39 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
 ;; ---------- L --------------------------------------------------
 ;; ---------- M --------------------------------------------------
 
+(use-package magit
+  :ensure t
+  :commands (magit-blame
+             magit-commit
+             magit-commit-popup
+             magit-diff-popup
+             magit-diff-unstaged
+             magit-fetch-popup
+             magit-init
+             magit-log-popup
+             magit-pull-popup
+             magit-push-popup
+             magit-revert
+             magit-stage-file
+             magit-status
+             magit-unstage-file
+             magit-blame-mode)
+  :bind (("C-x g" . magit-status))
+
+  :config
+
+  (global-git-commit-mode)
+
+  (general-define-key
+   :keymaps 'magit-mode-map
+   "'" #'eshell-here)
+
+  (use-package magit-popup :ensure t)
+  (use-package git-commit :ensure t :defer t)
+
+  (setq magit-completing-read-function 'ivy-completing-read))
+
+
 (use-package markdown-mode :ensure t
   :mode (("\\.md\\'" . markdown-mode)
          ("README\\'"   . markdown-mode))
@@ -583,6 +616,8 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
                                (turn-on-visual-line-mode)
                                (setq TeX-source-correlate-mode t)
                                (setq TeX-PDF-mode-parsed t)
+                               (setq TeX-parse-self t)
+                               (setq-default TeX-master nil)
                                )
             )
   :bind (("C-c C-ö" . next-error))
