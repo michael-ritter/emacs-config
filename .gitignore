@@ -1,5 +1,6 @@
 emacs.d/
 /.abbrev_defs
+.mc-lists.el
 recentf
 smex-items
 srecode-map.el
