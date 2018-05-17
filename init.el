@@ -506,6 +506,25 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
   (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 0)))
 )
 
+;;;; Mercurial integration - Monky
+(use-package monky
+  :ensure t
+  :commands monky-status
+  :bind ("C-x h" . monky-status)
+  :init
+  (progn
+    (setq monky-process-type 'cmdserver))
+  :config
+  (use-package hgignore-mode
+    :ensure t
+    )
+  (use-package hgrc-mode
+    :ensure t
+    )
+  )
+
+
+
 (use-package multiple-cursors
   :ensure t
   :bind*
@@ -561,6 +580,27 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
 ;; ---------- P --------------------------------------------------
 ;; ---------- Q --------------------------------------------------
 ;; ---------- R --------------------------------------------------
+
+;; recent files
+(use-package recentf
+  :init
+  (recentf-mode 1)
+
+  :config
+
+  ;; Increase limit
+  (setq recentf-max-menu-items 25)
+
+  ;; Emacs
+  (add-to-list 'recentf-exclude (format "%s/.orhc-bibtex-cache" (getenv "HOME")))
+  (add-to-list 'recentf-exclude (format "%s/configuration/emacs\\.d/\\(?!\\(main.*\\)\\)" (getenv "HOME")))
+  (add-to-list 'recentf-exclude (format "%s/\\.emacs\\.d/.*" (getenv "HOME")))
+
+  ;; Some caches
+  (add-to-list 'recentf-exclude (format "%s/\\.ido\\.last" (getenv "HOME")))
+  (add-to-list 'recentf-exclude (format "%s/\\.recentf" (getenv "HOME")))
+  )
+
 ;; ---------- S --------------------------------------------------
 
 (use-package smartparens
