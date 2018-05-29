@@ -5,7 +5,8 @@
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+;;(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (package-initialize)
 
@@ -351,9 +352,9 @@ _p_: prev    _r_: reverse
 ;; ---------- H --------------------------------------------------
 
 (use-package hl-line
-  ;; souligne la ligne du curseur
+  ;; highlight cursor line
   :init
-  (global-hl-line-mode -1))
+  (global-hl-line-mode t))
 
 (use-package htmlize :ensure t
   :defer t)
@@ -681,6 +682,9 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
 (global-set-key (kbd "C-<") 'beginning-of-buffer)
 (global-set-key (kbd "M->") 'end-of-buffer)
 (global-set-key (kbd "M-<") 'beginning-of-buffer)
+
+;; line numbers
+(global-display-line-numbers-mode t)
 
 ;;; custom
 (setq custom-file "~/.emacs.d/emacs-custom.el")
