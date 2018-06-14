@@ -352,6 +352,7 @@ _p_: prev    _r_: reverse
 ;; ---------- H --------------------------------------------------
 
 (use-package highlight-indent-guides
+  :ensure t
   :config
   (setq highlight-indent-guides-method 'character)
   (setq highlight-indent-guides-character ?\|)
