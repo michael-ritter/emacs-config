@@ -351,6 +351,12 @@ _p_: prev    _r_: reverse
 ;; ---------- G --------------------------------------------------
 ;; ---------- H --------------------------------------------------
 
+(use-package highlight-indent-guides
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (setq highlight-indent-guides-character ?\|)
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+
 (use-package hl-line
   ;; highlight cursor line
   :init
