@@ -515,7 +515,10 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
          ("README\\'"   . markdown-mode))
   :config
   (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 0)))
-)
+  )
+
+(use-package markdown-preview-mode :ensure t
+  )
 
 ;;;; Mercurial integration - Monky
 (use-package monky
