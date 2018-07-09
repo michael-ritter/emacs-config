@@ -513,10 +513,14 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
   :mode "\\.\\(md\\|markdown\\)\\'"
   :config
   (use-package pandoc-mode :init
-    (add-hook 'markdown-mode-hook 'turn-on-pandoc))
+    )
   (add-hook 'markdown-mode-hook (lambda ()
                                   (auto-fill-mode nil)
-                                  ('turn-on-visual-line-mode))))
+                                  (turn-on-visual-line-mode)
+                                  (pandoc-mode)
+                                  )
+            )
+  )
 
 (use-package markdown-preview-mode :ensure t
   )
