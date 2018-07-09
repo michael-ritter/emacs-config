@@ -60,9 +60,8 @@
 (column-number-mode) ; display colum number in mode line
 (save-place-mode)    ; save cursor position between sessions
 (delete-selection-mode 1)               ; replace highlighted text with type
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;;; appearence
+;
+;; appearence
 (when window-system
   (tooltip-mode -1)                     ; no tooltips
   (tool-bar-mode -1)                    ; no toolbar
@@ -676,7 +675,7 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
                                (setq-default TeX-master nil)
                                (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
                                (setq TeX-view-program-list '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
-
+                               (add-hook 'before-save-hook 'delete-trailing-whitespace)
                                )
             )
   :bind (("C-c C-ö" . next-error))
