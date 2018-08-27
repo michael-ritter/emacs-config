@@ -26,6 +26,8 @@
 (require 'quelpa)
 (require 'quelpa-use-package)
 
+(use-package general :ensure t)
+
 ;;; Sane default
 (setq
  use-package-verbose nil  ; use-package is not verbose
@@ -349,8 +351,18 @@ _p_: prev    _r_: reverse
 
 ;; ---------- D --------------------------------------------------
 ;; ---------- E --------------------------------------------------
+
+;(use-package ediff
+;  :commands (ediff ediff3)
+;  :config
+;  (setq ediff-split-window-function #'split-window-horizontally
+;        ediff-window-setup-function #'ediff-setup-windows-plain))
+
 ;; ---------- F --------------------------------------------------
 ;; ---------- G --------------------------------------------------
+
+
+
 ;; ---------- H --------------------------------------------------
 
 (use-package highlight-indent-guides
@@ -689,6 +701,7 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
 )
 ;; ---------- U --------------------------------------------------
 ;;; Unfill Paragraph by Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+
 (defun unfill-paragraph (&optional region)
       "Takes a multi-line paragraph and makes it into a single line of text."
       (interactive (progn (barf-if-buffer-read-only) '(t)))
@@ -698,7 +711,14 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
         (fill-paragraph nil region)))
     ;; Handy key definition
     (define-key global-map "\C-q" 'unfill-paragraph)
+
 ;; ---------- V --------------------------------------------------
+
+(use-package vdiff
+  :config
+  (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map)
+  )
+
 ;; ---------- W --------------------------------------------------
 ;; ---------- X --------------------------------------------------
 ;; ---------- Y --------------------------------------------------
