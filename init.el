@@ -28,6 +28,9 @@
 
 (use-package general :ensure t)
 
+;;; start server
+(server-start)
+
 ;;; Sane default
 (setq
  use-package-verbose nil  ; use-package is not verbose
