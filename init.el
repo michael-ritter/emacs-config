@@ -652,7 +652,9 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
                                (add-hook 'before-save-hook 'delete-trailing-whitespace)
                                )
             )
-  :bind (("C-c C-ö" . next-error))
+  :bind (("C-c C-ö" . next-error)
+         ("C-c s" . reftex-search-document)
+         ("C-c g" . reftex-grep-document))
 )
 ;; ---------- U --------------------------------------------------
 ;;; Unfill Paragraph by Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
