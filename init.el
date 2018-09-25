@@ -643,6 +643,9 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
                                (LaTeX-math-mode)
                                (setq TeX-source-correlate-mode t)
                                (setq TeX-source-correlate-method 'synctex)
+                               ;; for SyncTeX, set the following in Skim:
+                               ;; Command: /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+                               ;; Arguments: --no-wait +%line "%file"
                                (setq TeX-source-correlate-start-server t)
                                (setq TeX-PDF-mode-parsed t)
                                (setq TeX-parse-self t)
