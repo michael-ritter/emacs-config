@@ -697,6 +697,8 @@ _c_ ^+^ _r_ | _d_one      ^ ^  | _o_ops   | _m_: matcher %-5s(ivy--matcher-desc)
 ;;; custom
 (setq custom-file "~/.emacs.d/emacs-custom.el")
 (load custom-file)
+;; set locale
+(setenv "LANG" "de_DE.UTF-8")
 ;(put 'erase-buffer 'disabled nil)
 ;(put 'narrow-to-region 'disabled nil)
 ;(put 'downcase-region 'disabled nil)
