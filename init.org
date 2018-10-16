@@ -364,6 +364,7 @@ add a new line in the end of a file on save.
 (setq require-final-newline t)
 #+END_SRC
 
+*** Multiple Cursors
 Multiple cusors are a must. Make <return> insert a newline; multiple-cursors-mode can still be disabled with C-g.
 
 #+BEGIN_SRC emacs-lisp
@@ -371,7 +372,7 @@ Multiple cusors are a must. Make <return> insert a newline; multiple-cursors-mod
   :config
   (setq mc/always-run-for-all 1)
   (global-set-key (kbd "M-d") 'mc/mark-next-like-this)
- (global-set-key (kbd "M-D") 'mc/edit-beginnings-of-lines)
+  (global-set-key (kbd "M-D") 'mc/edit-beginnings-of-lines)
   (global-set-key (kbd "C-M-D") 'mc/mark-all-dwim)
   (define-key mc/keymap (kbd "<return>") nil))
 #+END_SRC
@@ -414,6 +415,7 @@ Move between windows with Meta-Shift-Arrow.
   (global-set-key (kbd "M-S-<right>")  'windmove-right)
   (global-set-key (kbd "M-S-<up>")  'windmove-up)
   (global-set-key (kbd "M-S-<down>")  'windmove-down)
+)
 #+END_SRC
 ** Shackle
 
