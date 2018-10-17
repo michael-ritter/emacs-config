@@ -130,17 +130,26 @@ This helps get rid of =functions might not be defined at runtime= warnings. See 
 #+END_SRC
 
 * Visuals
+** General Thememing
+Dark frame
 
 #+BEGIN_SRC emacs-lisp
 (when (memq window-system '(mac ns))
-  (add-to-list 'default-frame-alist '(ns-appearance . light)) ;; {light, dark}
+  (add-to-list 'default-frame-alist '(ns-appearance . dark)) ;; {light, dark}
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t)))
 #+END_SRC
 
-I've tried many 3rd party themes, but keep coming back to the default light theme.
+Set smyx and tsdh-light as standard themes.
 
 #+BEGIN_SRC emacs-lisp
-(load-theme 'tsdh-light)
+(use-package smyx-theme
+  :ensure t
+)
+;; Load a dark theme if in GUI, load a light theme if in NW
+(if (display-graphic-p)
+    (load-theme 'smyx t)
+(load-theme 'tsdh-light))
+
 #+END_SRC
 
 SF Mono font, remove the cruft and make the initial size bigger.
@@ -152,6 +161,7 @@ SF Mono font, remove the cruft and make the initial size bigger.
 (tool-bar-mode -1)
 #+END_SRC
 
+** Parens
 #+BEGIN_SRC emacs-lisp
 ;; (require 'paren)
 ;; (setq show-paren-delay 0)
@@ -161,29 +171,34 @@ SF Mono font, remove the cruft and make the initial size bigger.
 (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
 #+END_SRC
 
+** Line Wrap
 Wrap lines always.
 
 #+BEGIN_SRC emacs-lisp
 (global-visual-line-mode 1)
 #+END_SRC
 
+** Mode Line
 Configure the mode line to be nice and simple: We want to show columns in addition to rows.
 
 #+BEGIN_SRC emacs-lisp
 (setq column-number-mode t) ;; show columns in addition to rows in mode line
-(set-face-attribute 'mode-line nil :background "NavajoWhite")
-(set-face-attribute 'mode-line-inactive nil :background "#FAFAFA")
+;(set-face-attribute 'mode-line nil :background "NavajoWhite")
+;(set-face-attribute 'mode-line-inactive nil :background "#FAFAFA")
 #+END_SRC
 
+** Line Numbers
 Show line numbers in the left column.
 (global-display-line-numbers-mode t)
 
+** Title Bar
 Show full path in the title bar.
 
 #+BEGIN_SRC emacs-lisp
 (setq-default frame-title-format "%b (%f)")
 #+END_SRC
 
+** Spaces, Tabs and Indents
 Never use tabs, use spaces instead. Configure default indent to 2 spaces.
 
 #+BEGIN_SRC emacs-lisp
@@ -198,15 +213,7 @@ Never use tabs, use spaces instead. Configure default indent to 2 spaces.
 (setq-default c-basic-indent 2)
 #+END_SRC
 
-Which key is great for learning Emacs, it shows a nice table of possible commands.
-
-#+BEGIN_SRC emacs-lisp
-(use-package which-key
-  :config
-  (which-key-mode)
-  (setq which-key-idle-delay 0.5))
-#+END_SRC
-
+** Cursor
 Disable blinking cursor.
 
 #+BEGIN_SRC emacs-lisp
@@ -280,6 +287,16 @@ Nice and smooth scrolling behavior.
 #+END_SRC
 
 * Basic Configuration
+** Which-Key
+Which key is great for learning Emacs, it shows a nice table of possible commands.
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 0.5))
+#+END_SRC
+
 ** Super Save
 Super-save auto-saves buffers when certain events happen - e.g. you switch between buffers, an Emacs frame loses focus, etc.
 
