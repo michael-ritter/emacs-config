@@ -29,7 +29,6 @@ ln -s emacs-config ~/.emacs.d
 
 On the first run Emacs will install some packages. It's best to restart Emacs after that process is done for the first time.
 * Configurations
-
 ** Use package
 
 Initialize package and add Melpa source.
@@ -122,7 +121,7 @@ This helps get rid of =functions might not be defined at runtime= warnings. See 
   (setq use-package-expand-minimally byte-compile-current-file))
 #+END_SRC
 
-** Visuals
+* Visuals
 
 #+BEGIN_SRC emacs-lisp
 (when (memq window-system '(mac ns))
@@ -152,25 +151,6 @@ SF Mono font, remove the cruft and make the initial size bigger.
 (set-face-background 'show-paren-match "grey84")
 ;; (set-face-foreground 'show-paren-match nil)
 (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-#+END_SRC
-
-Show parens and other pairs. Configure '' as non-pair for emacs-lisp-mode and `` for markdown-mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package smartparens
-  :config
-  (require 'smartparens-config)
-  (smartparens-global-mode t)
-  (show-smartparens-global-mode t)
-  (setq sp-show-pair-delay 0)
-
-  ;; no '' pair in emacs-lisp-mode
-  (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
-  (sp-local-pair 'markdown-mode "`"   nil :actions '(wrap insert))  ;; only use ` for wrap and auto insertion in markdown-mode
-  (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
-  (define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
-
-)
 #+END_SRC
 
 Wrap lines always.
@@ -284,13 +264,16 @@ Nice and smooth scrolling behavior.
 
 (setq mouse-wheel-follow-mouse 't)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
-;;(use-package smooth-scrolling :ensure t
-;;  :config
-;;  (smooth-scrolling-mode)
-;;  (setq smooth-scroll-margin 5))
+(use-package smooth-scrolling
+  :ensure t
+  :config
+(smooth-scrolling-mode))
+;;  (setq smooth-scroll-margin 5)
 #+END_SRC
 
-** super-save auto-saves buffers when certain events happen - e.g. you switch between buffers, an Emacs frame loses focus, etc.
+* Basic Configuration
+** Super Save
+Super-save auto-saves buffers when certain events happen - e.g. you switch between buffers, an Emacs frame loses focus, etc.
 
 #+BEGIN_SRC emacs-lisp
 (use-package super-save
@@ -316,7 +299,7 @@ A nice little real terminal in a popup.
 #+END_SRC
 
 ** Navigation and editing
-
+*** Movement and Deletion
 Kill word forward / backward with C-backspace and C-s-backspace (remember, super is fn)
 
 #+BEGIN_SRC emacs-lisp
@@ -331,15 +314,6 @@ Use C-< and C-> to move to beginning and end of buffer.
 (global-set-key (kbd "C->") 'end-of-buffer)
 #+END_SRC
 
-
-Expand-region allows to gradually expand selection inside words, sentences, etc. =C-'= is bound to Org's =cycle through agenda files=, which I don't really use, so I unbind it here before assigning global shortcut for expansion.
-
-#+BEGIN_SRC emacs-lisp
-(use-package expand-region
-  :config
-  (global-set-key (kbd "C-'") 'er/expand-region))
-#+END_SRC
-
 =Move-text= allows moving lines around with meta-up/down.
 
 #+BEGIN_SRC emacs-lisp
@@ -348,7 +322,16 @@ Expand-region allows to gradually expand selection inside words, sentences, etc.
   (move-text-default-bindings))
 #+END_SRC
 
+*** Expand Region
+Expand-region allows to gradually expand selection inside words, sentences, etc. =C-'= is bound to Org's =cycle through agenda files=, which I don't really use, so I unbind it here before assigning global shortcut for expansion.
 
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :config
+  (global-set-key (kbd "C-'") 'er/expand-region))
+#+END_SRC
+
+*** Visual RegEx Search and Replace
 Provide nice visual feedback for replace.
 
 #+BEGIN_SRC emacs-lisp
@@ -357,6 +340,7 @@ Provide nice visual feedback for replace.
   (define-key global-map (kbd "M-&") 'vr/replace))
 #+END_SRC
 
+*** Saving and Formatting
 add a new line in the end of a file on save.
 
 #+BEGIN_SRC emacs-lisp
@@ -381,6 +365,28 @@ Comment lines.
 
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "s-/") 'comment-line)
+#+END_SRC
+
+*** Smart Parens
+Show parens and other pairs. Configure '' as non-pair for emacs-lisp-mode and add pairs for markdown-mode.
+
+#+BEGIN_SRC emacs-lisp
+(use-package smartparens
+  :config
+  (require 'smartparens-config)
+  (smartparens-global-mode t)
+  (show-smartparens-global-mode t)
+  (setq sp-show-pair-delay 0)
+
+  ;; no '' pair in emacs-lisp-mode
+  (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+  (sp-local-pair 'markdown-mode "_" "_")
+  (sp-local-pair 'markdown-mode "**" "**")
+  (sp-local-pair 'markdown-mode "`" "`")
+  (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
+  (define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
+
+)
 #+END_SRC
 
 ** Dired
@@ -461,7 +467,6 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
   (setq ivy-rich-path-style 'abbrev)) ;; To abbreviate paths using abbreviate-file-name (e.g. replace “/home/username” with “~”
 #+END_SRC
 
-
 ** Spellchecking
 
 Spellchecking requires an external command to be available. Install =aspell= on your Mac, then make it the default checker for Emacs' =ispell=. Note that personal dictionary is located at =~/.aspell.LANG.pws= by default.
@@ -477,7 +482,6 @@ Enable spellcheck on the fly for all text modes. This includes org, latex and La
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
-
 ** Auto completion using company mode
 
 #+BEGIN_SRC emacs-lisp
@@ -489,16 +493,18 @@ Enable spellcheck on the fly for all text modes. This includes org, latex and La
   (add-hook 'after-init-hook 'global-company-mode))
 #+END_SRC
 
-** Packages for programming
+* Packages for specific applications
+** Programming
 
 Here are all the packages needed for programming languages and formats.
 
 #+BEGIN_SRC emacs-lisp
 (use-package yaml-mode)
-(use-package markdown-mode)
 #+END_SRC
 
-Web mode.
+** Web Development
+
+web mode
 
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode
@@ -507,7 +513,24 @@ Web mode.
   (setq web-mode-markup-indent-offset 2))
 #+END_SRC
 
-* Org
+** Markdown and Pandoc
+
+Markdown mode is activated for .md and .markdown files. It includes pandoc mode and makes sure to switch off auto-fill (preserve trailing whitespace!).
+
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+ :ensure t
+ :mode "\\.\\(md\\|markdown\\)\\'"
+ :config
+ (use-package pandoc-mode :init
+ )
+ (add-hook 'markdown-mode-hook (lambda ()
+ (auto-fill-mode nil)
+ (turn-on-visual-line-mode)
+ (pandoc-mode))))
+#+END_SRC
+
+** Org-Mode
 
 Visually indent sections. This looks better for smaller files.
 
@@ -525,7 +548,7 @@ Inside code blocks, indentation should be correct depending on the source langua
 (setq org-src-fontify-natively t)
 #+END_SRC
 
-* AucTeX Settings
+** AucTeX
 
 #+BEGIN_SRC emacs-lisp
 (use-package tex
@@ -557,6 +580,7 @@ Inside code blocks, indentation should be correct depending on the source langua
 )
 #+END_SRC
 
+* Custom Functions
 ** Unfill Paragraph
 Unfill Paragraph by Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
 
