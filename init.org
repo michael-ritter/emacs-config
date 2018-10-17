@@ -1,0 +1,638 @@
+#+TITLE: Emacs configuration file
+#+AUTHOR: Michael Ritter
+#+BABEL: :cache yes
+#+PROPERTY: header-args :tangle yes
+#+STARTUP: overview
+
+* Credits
+Initially inspired by [[https://github.com/freetonik/emacs-dotfiles][Rakhim Davletkaliyev's]] setup of [[https://github.com/freetonik/emacscast][EmacsCast]].
+
+* Installing
+
+Clone the repo:
+
+#+BEGIN_SRC
+git clone https://github.com/michael-ritter/emacs-config.git
+#+END_SRC
+
+Make a backup of your old =.emacs.d=:
+
+#+BEGIN_SRC
+mv ~/.emacs.d ~/.emacs.d-bak
+#+END_SRC
+
+Make a softlink to the cloned directory:
+
+#+BEGIN_SRC
+ln -s emacs-config ~/.emacs.d
+#+END_SRC
+
+If necessary, set the git flag =--skip-worktree= on ==init.el=. The effect is to tell git that any changes to that file can safely be ignored. The =init.el= needs to be in the repository to bootstrap the process, but it will automatically be replaced by a processed version of this =init.org= file.
+
+#+BEGIN_SRC
+git update-index --skip-worktree init.el
+#+END_SRC
+
+On the first run Emacs will install some packages. It's best to restart Emacs after that process is done for the first time.
+
+* Configurations
+** Use package
+
+Initialize package and add Melpa source.
+
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                 (not (gnutls-available-p))))
+    (proto (if no-ssl "http" "https")))
+    ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+    (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+    ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+    (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+(add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+(package-initialize)
+#+END_SRC
+
+Install use-package.
+
+#+BEGIN_SRC emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile (require 'use-package))
+(require 'use-package)
+
+(setq use-package-always-ensure t)
+#+END_SRC
+
+** Modifier keys
+
+Emacs control is Ctrl. Emacs Meta is Command. Mac "option" key is unmodified. Function key is Emacs super.
+
+#+BEGIN_SRC emacs-lisp
+(setq mac-control-modifier 'control)
+(setq mac-option-modifier 'nil)
+(setq mac-command-modifier 'meta)
+(setq mac-right-command-modifier 'meta)
+(setq mac-right-option-modifier 'nil)
+(setq ns-function-modifier 'super)
+#+END_SRC
+
+** Meta
+
+When this configuration is loaded for the first time, the =init.el= is the file that is loaded. It looks like this:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+;; This file replaces itself with the actual configuration at first run.
+
+;; We can't tangle without org!
+(require 'org)
+;; Open the configuration
+(find-file (concat user-emacs-directory "init.org"))
+;; tangle it
+(org-babel-tangle)
+;; load it
+(load-file (concat user-emacs-directory "init.el"))
+;; finally byte-compile it
+(byte-compile-file (concat user-emacs-directory "init.el"))
+#+END_SRC
+
+Lexical scoping for the init-file is needed, it can be specified in the
+header. This is the first line of the actual configuration:
+
+#+BEGIN_SRC emacs-lisp
+;;; -*- lexical-binding: t -*-
+#+END_SRC
+
+Tangle and compile this file on save automatically:
+
+#+BEGIN_SRC emacs-lisp
+(defun tangle-init ()
+  "If the current buffer is 'init.org' the code-blocks are
+tangled, and the tangled file is compiled."
+  (when (equal (buffer-file-name)
+               (expand-file-name (concat user-emacs-directory "init.org")))
+    ;; Avoid running hooks when tangling.
+    (let ((prog-mode-hook nil))
+      (org-babel-tangle)
+      (byte-compile-file (concat user-emacs-directory "init.el")))))
+
+(add-hook 'after-save-hook 'tangle-init)
+#+END_SRC
+
+This helps get rid of =functions might not be defined at runtime= warnings. See https://github.com/jwiegley/use-package/issues/590
+
+#+BEGIN_SRC emacs-lisp
+(eval-when-compile
+  (setq use-package-expand-minimally byte-compile-current-file))
+#+END_SRC
+
+* Visuals
+** General Thememing
+Dark frame
+
+#+BEGIN_SRC emacs-lisp
+(when (memq window-system '(mac ns))
+  (add-to-list 'default-frame-alist '(ns-appearance . dark)) ;; {light, dark}
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t)))
+#+END_SRC
+
+Set smyx and tsdh-light as standard themes.
+
+#+BEGIN_SRC emacs-lisp
+(use-package smyx-theme
+  :ensure t
+)
+;; Load a dark theme if in GUI, load a light theme if in NW
+(if (display-graphic-p)
+    (load-theme 'smyx t)
+(load-theme 'tsdh-light))
+
+#+END_SRC
+
+SF Mono font, remove the cruft and make the initial size bigger.
+
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'default nil :font "SF Mono 14")
+(setq-default line-spacing 0)
+(setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
+(tool-bar-mode -1)
+#+END_SRC
+
+** Parens
+#+BEGIN_SRC emacs-lisp
+;; (require 'paren)
+;; (setq show-paren-delay 0)
+;; (show-paren-mode 1)
+(set-face-background 'show-paren-match "grey84")
+;; (set-face-foreground 'show-paren-match nil)
+(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+#+END_SRC
+
+** Line Wrap
+Wrap lines always.
+
+#+BEGIN_SRC emacs-lisp
+(global-visual-line-mode 1)
+#+END_SRC
+
+** Mode Line
+Configure the mode line to be nice and simple: We want to show columns in addition to rows.
+
+#+BEGIN_SRC emacs-lisp
+(setq column-number-mode t) ;; show columns in addition to rows in mode line
+;(set-face-attribute 'mode-line nil :background "NavajoWhite")
+;(set-face-attribute 'mode-line-inactive nil :background "#FAFAFA")
+#+END_SRC
+
+** Line Numbers
+Show line numbers in the left column.
+(global-display-line-numbers-mode t)
+
+** Title Bar
+Show full path in the title bar.
+
+#+BEGIN_SRC emacs-lisp
+(setq-default frame-title-format "%b (%f)")
+#+END_SRC
+
+** Spaces, Tabs and Indents
+Never use tabs, use spaces instead. Configure default indent to 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode nil)
+(setq tab-width 2)
+
+(setq js-indent-level 2)
+(setq css-indent-offset 2)
+(setq-default c-basic-offset 2)
+(setq c-basic-offset 2)
+(setq-default tab-width 2)
+(setq-default c-basic-indent 2)
+#+END_SRC
+
+** Cursor
+Disable blinking cursor.
+
+#+BEGIN_SRC emacs-lisp
+(blink-cursor-mode 0)
+#+END_SRC
+
+** Sane defaults
+
+Use UTF-8 by default.
+
+#+BEGIN_SRC emacs-lisp
+(prefer-coding-system 'utf-8)
+#+END_SRC
+
+Do not create any auto save and backup files.
+
+#+BEGIN_SRC emacs-lisp
+(setq make-backup-files nil) ; stop creating backup~ files
+(setq auto-save-default nil) ; stop creating #autosave# files
+(setq create-lockfiles nil)  ; stop creating .# files
+#+END_SRC
+
+Revert (update) buffers automatically when underlying files are changed externally.
+
+#+BEGIN_SRC emacs-lisp
+(global-auto-revert-mode t)
+#+END_SRC
+
+Some basic things: Do not show startup messages, use y/n instead of yes/no everywhere, no scrollbar, no toolbar or menubar, highlight current line, delete selection.
+
+#+BEGIN_SRC emacs-lisp
+(setq
+ inhibit-startup-message t         ; Don't show the startup message
+ inhibit-startup-screen t          ; or screen
+ cursor-in-non-selected-windows t  ; Hide the cursor in inactive windows
+ echo-keystrokes 0.1               ; Show keystrokes right away, don't show the message in the scratch buffe
+ initial-scratch-message nil       ; Empty scratch buffer
+ initial-major-mode 'org-mode      ; org mode by default
+ sentence-end-double-space nil     ; Sentences should end in one space, come on!
+ confirm-kill-emacs 'y-or-n-p      ; y and n instead of yes and no when quitting
+ ;; help-window-select t              ; select help window so it's easy to quit it with 'q'
+)
+
+(fset 'yes-or-no-p 'y-or-n-p)      ; y and n instead of yes and no everywhere else
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(delete-selection-mode 1)
+(global-unset-key (kbd "s-p"))
+(global-hl-line-mode t)
+#+END_SRC
+
+** Scrolling
+
+Nice and smooth scrolling behavior.
+
+#+BEGIN_SRC emacs-lisp
+(setq scroll-margin 10
+   scroll-step 1
+   next-line-add-newlines nil
+   scroll-conservatively 10000
+   scroll-preserve-screen-position 1)
+
+(setq mouse-wheel-follow-mouse 't)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+(use-package smooth-scrolling
+  :ensure t
+  :config
+(smooth-scrolling-mode))
+;;  (setq smooth-scroll-margin 5)
+#+END_SRC
+
+* Basic Configuration
+** Which-Key
+Which key is great for learning Emacs, it shows a nice table of possible commands.
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 0.5))
+#+END_SRC
+
+** Super Save
+Super-save auto-saves buffers when certain events happen - e.g. you switch between buffers, an Emacs frame loses focus, etc.
+
+#+BEGIN_SRC emacs-lisp
+(use-package super-save
+  :config
+  (super-save-mode +1))
+#+END_SRC
+
+** OS integration
+
+Pass system shell environment to Emacs. This is important primarily for shell inside Emacs, but also things like Org mode export to Tex PDF don't work, since it relies on running external command =pdflatex=, which is loaded from =PATH=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package exec-path-from-shell)
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+#+END_SRC
+
+A nice little real terminal in a popup.
+
+#+BEGIN_SRC emacs-lisp
+(use-package shell-pop)
+#+END_SRC
+
+** Navigation and editing
+*** Movement and Deletion
+
+Move backward / forward one word with C-left/right
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-<right>") 'forward-word)
+(global-set-key (kbd "C-<left>") 'backward-word)
+#+END_SRC
+
+Kill word forward / backward with C-backspace and C-s-backspace (remember, super is fn)
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-<backspace>") 'backward-kill-word)
+(global-set-key (kbd "C-s-<backspace>") 'kill-word)
+#+END_SRC
+
+Use M-< and M-> to move to beginning and end of buffer.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-<") 'beginning-of-buffer)
+(global-set-key (kbd "M->") 'end-of-buffer)
+#+END_SRC
+
+=Move-text= allows moving lines around with meta-up/down.
+
+#+BEGIN_SRC emacs-lisp
+(use-package move-text
+  :config
+  (move-text-default-bindings))
+#+END_SRC
+
+*** Expand Region
+Expand-region allows to gradually expand selection inside words, sentences, etc. =C-'= is bound to Org's =cycle through agenda files=, which I don't really use, so I unbind it here before assigning global shortcut for expansion.
+
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :config
+  (global-set-key (kbd "C-'") 'er/expand-region))
+#+END_SRC
+
+*** Visual RegEx Search and Replace
+Provide nice visual feedback for replace.
+
+#+BEGIN_SRC emacs-lisp
+(use-package visual-regexp
+  :config
+  (define-key global-map (kbd "M-&") 'vr/replace))
+#+END_SRC
+
+*** Saving and Formatting
+add a new line in the end of a file on save.
+
+#+BEGIN_SRC emacs-lisp
+;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq require-final-newline t)
+#+END_SRC
+
+*** Multiple Cursors
+Multiple cusors are a must. Make <return> insert a newline; multiple-cursors-mode can still be disabled with C-g.
+
+#+BEGIN_SRC emacs-lisp
+(use-package multiple-cursors
+  :config
+  (setq mc/always-run-for-all 1)
+  (global-set-key (kbd "M-d") 'mc/mark-next-like-this)
+  (global-set-key (kbd "M-D") 'mc/edit-beginnings-of-lines)
+  (global-set-key (kbd "C-M-D") 'mc/mark-all-dwim)
+  (define-key mc/keymap (kbd "<return>") nil))
+#+END_SRC
+
+Comment lines.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "s-/") 'comment-line)
+#+END_SRC
+
+*** Smart Parens
+Show parens and other pairs. Configure '' as non-pair for emacs-lisp-mode and add pairs for markdown-mode.
+
+#+BEGIN_SRC emacs-lisp
+(use-package smartparens
+  :config
+  (require 'smartparens-config)
+  (smartparens-global-mode t)
+  (show-smartparens-global-mode t)
+  (setq sp-show-pair-delay 0)
+
+  ;; no '' pair in emacs-lisp-mode
+  (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+  (sp-local-pair 'markdown-mode "_" "_")
+  (sp-local-pair 'markdown-mode "**" "**")
+  (sp-local-pair 'markdown-mode "`" "`")
+  (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
+  (define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
+
+)
+#+END_SRC
+
+** Dired
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired
+  :ensure nil
+  :custom
+  (dired-auto-revert-buffer t)
+  (dired-dwim-target t)
+  (dired-hide-details-hide-symlink-targets nil)
+  (dired-listing-switches "-alh")
+  (dired-ls-F-marks-symlinks nil)
+  (dired-recursive-copies 'always))
+#+END_SRC
+
+** Windows
+
+I'm still not happy with the way new windows are spawned. For now, at least, let's make it so that new automatic windows are always created on the bottom, not on the side.
+
+#+BEGIN_SRC emacs-lisp
+;; (setq split-height-threshold 0)
+;; (setq split-width-threshold nil)
+#+END_SRC
+
+Move between windows with Meta-Shift-Arrow.
+
+#+BEGIN_SRC emacs-lisp
+(use-package windmove
+  :config
+  (global-set-key (kbd "M-S-<left>")  'windmove-left)
+  (global-set-key (kbd "M-S-<right>")  'windmove-right)
+  (global-set-key (kbd "M-S-<up>")  'windmove-up)
+  (global-set-key (kbd "M-S-<down>")  'windmove-down)
+)
+#+END_SRC
+** Shackle
+
+Shackle might be worth a try, but I'd like to get the rest sorted out first.
+
+** Ivy, Swiper and Counsel
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq enable-recursive-minibuffers t)
+  (setq ivy-initial-inputs-alist nil)
+  (setq ivy-re-builders-alist
+      '((swiper . ivy--regex-plus)
+        (t      . ivy--regex-fuzzy))))   ;; enable fuzzy searching everywhere except for Swiper
+
+(use-package swiper
+  :config
+  (global-set-key "\C-s" 'swiper)
+  (global-set-key "\C-r" 'swiper)
+)
+
+(use-package counsel
+  :config
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "M-y") 'counsel-yank-pop)
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file))
+
+(use-package smex)
+(use-package flx)
+(use-package avy)
+#+END_SRC
+
+Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-rich
+  :config
+  (ivy-rich-mode 1)
+  (setq ivy-rich-path-style 'abbrev)) ;; To abbreviate paths using abbreviate-file-name (e.g. replace “/home/username” with “~”
+#+END_SRC
+
+** Spellchecking
+
+Spellchecking requires an external command to be available. Install =aspell= on your Mac, then make it the default checker for Emacs' =ispell=. Note that personal dictionary is located at =~/.aspell.LANG.pws= by default.
+
+#+BEGIN_SRC emacs-lisp
+(setq ispell-program-name "aspell")
+#+END_SRC
+
+Enable spellcheck on the fly for all text modes. This includes org, latex and LaTeX.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+#+END_SRC
+
+** Auto completion using company mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :config
+  (setq company-idle-delay 0.1)
+  (setq company-global-modes '(not org-mode markdown-mode))
+  (setq company-minimum-prefix-length 1)
+  (add-hook 'after-init-hook 'global-company-mode))
+#+END_SRC
+
+* Packages for specific applications
+** Programming
+
+Here are all the packages needed for programming languages and formats.
+
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode)
+#+END_SRC
+
+** Web Development
+
+web mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+  :mode ("\\.html\\'")
+  :config
+  (setq web-mode-markup-indent-offset 2))
+#+END_SRC
+
+** Markdown and Pandoc
+
+Markdown mode is activated for .md and .markdown files. It includes pandoc mode and makes sure to switch off auto-fill (preserve trailing whitespace!).
+
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+ :ensure t
+ :mode "\\.\\(md\\|markdown\\)\\'"
+ :config
+ (use-package pandoc-mode :init
+ )
+ (add-hook 'markdown-mode-hook (lambda ()
+ (auto-fill-mode nil)
+ (turn-on-visual-line-mode)
+ (pandoc-mode))))
+#+END_SRC
+
+** Org-Mode
+
+Visually indent sections. This looks better for smaller files.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :config
+  (setq org-startup-indented t))
+#+END_SRC
+
+Inside code blocks, indentation should be correct depending on the source language used and have code highlighting.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-src-tab-acts-natively t)
+(setq org-src-preserve-indentation t)
+(setq org-src-fontify-natively t)
+#+END_SRC
+
+** AucTeX
+
+#+BEGIN_SRC emacs-lisp
+(use-package tex
+  :ensure auctex
+  :config
+  (setq TeX-auto-save t)
+  (add-hook 'LaTeX-mode-hook (lambda ()
+                               (turn-on-reftex)
+                               (turn-on-visual-line-mode)
+                               (setq TeX-source-correlate-mode t)
+                               (setq TeX-source-correlate-method 'synctex)
+                               ;; for SyncTeX, set the following in Skim:
+                               ;; Command: /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+                               ;; Arguments: --no-wait +%line "%file"
+                               (setq TeX-source-correlate-start-server t)
+                               (setq TeX-PDF-mode-parsed t)
+                               (setq TeX-parse-self t)
+                               (setq-default TeX-master nil)
+                               (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+                               (setq TeX-view-program-list '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+                               (add-hook 'before-save-hook 'delete-trailing-whitespace)
+                               )
+            )
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  :bind (("C-c C-ö" . next-error)
+         ("<C-return>" . LaTeX-insert-item)
+         ("C-c s" . reftex-search-document)
+         ("C-c g" . reftex-grep-document))
+)
+#+END_SRC
+
+* Custom Functions
+** Unfill Paragraph
+Unfill Paragraph by Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+
+#+BEGIN_SRC emacs-lisp
+(defun unfill-paragraph (&optional region)
+      "Takes a multi-line paragraph and makes it into a single line of text."
+      (interactive (progn (barf-if-buffer-read-only) '(t)))
+      (let ((fill-column (point-max))
+            ;; This would override `fill-column' if it's an integer.
+            (emacs-lisp-docstring-fill-column t))
+        (fill-paragraph nil region)))
+    ;; Handy key definition
+    (define-key global-map "\C-q" 'unfill-paragraph)
+#+END_SRC
+
+* Customizations
+
+Store custom-file separately, don't freak out when it's not found.
+
+#+BEGIN_SRC emacs-lisp
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file 'noerror)
+#+END_SRC
