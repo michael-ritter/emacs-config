@@ -308,6 +308,13 @@ A nice little real terminal in a popup.
 
 ** Navigation and editing
 *** Movement and Deletion
+
+Move backward / forward one word with C-left/right
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-<right>") 'forward-word)
+(global-set-key (kbd "C-<left>") 'backward-word)
+#+END_SRC
+
 Kill word forward / backward with C-backspace and C-s-backspace (remember, super is fn)
 
 #+BEGIN_SRC emacs-lisp
@@ -315,11 +322,11 @@ Kill word forward / backward with C-backspace and C-s-backspace (remember, super
 (global-set-key (kbd "C-s-<backspace>") 'kill-word)
 #+END_SRC
 
-Use C-< and C-> to move to beginning and end of buffer. 
+Use M-< and M-> to move to beginning and end of buffer.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-<") 'beginning-of-buffer)
-(global-set-key (kbd "C->") 'end-of-buffer)
+(global-set-key (kbd "M-<") 'beginning-of-buffer)
+(global-set-key (kbd "M->") 'end-of-buffer)
 #+END_SRC
 
 =Move-text= allows moving lines around with meta-up/down.
@@ -582,6 +589,7 @@ Inside code blocks, indentation should be correct depending on the source langua
             )
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   :bind (("C-c C-ö" . next-error)
+         ("<C-return>" . LaTeX-insert-item)
          ("C-c s" . reftex-search-document)
          ("C-c g" . reftex-grep-document))
 )
