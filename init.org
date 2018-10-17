@@ -27,7 +27,14 @@ Make a softlink to the cloned directory:
 ln -s emacs-config ~/.emacs.d
 #+END_SRC
 
+If necessary, set the git flag =--skip-worktree= on ==init.el=. The effect is to tell git that any changes to that file can safely be ignored. The =init.el= needs to be in the repository to bootstrap the process, but it will automatically be replaced by a processed version of this =init.org= file.
+
+#+BEGIN_SRC
+git update-index --skip-worktree init.el
+#+END_SRC
+
 On the first run Emacs will install some packages. It's best to restart Emacs after that process is done for the first time.
+
 * Configurations
 ** Use package
 
