@@ -62,6 +62,7 @@ Install use-package.
   (package-install 'use-package))
 
 (eval-when-compile (require 'use-package))
+(require 'use-package)
 
 (setq use-package-always-ensure t)
 #+END_SRC
@@ -563,10 +564,8 @@ Inside code blocks, indentation should be correct depending on the source langua
   :config
   (setq TeX-auto-save t)
   (add-hook 'LaTeX-mode-hook (lambda ()
-              ;                 (rainbow-delimiters-mode)
                                (turn-on-reftex)
                                (turn-on-visual-line-mode)
-                               (LaTeX-math-mode)
                                (setq TeX-source-correlate-mode t)
                                (setq TeX-source-correlate-method 'synctex)
                                ;; for SyncTeX, set the following in Skim:
@@ -581,6 +580,7 @@ Inside code blocks, indentation should be correct depending on the source langua
                                (add-hook 'before-save-hook 'delete-trailing-whitespace)
                                )
             )
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   :bind (("C-c C-ö" . next-error)
          ("C-c s" . reftex-search-document)
          ("C-c g" . reftex-grep-document))
