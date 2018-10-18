@@ -303,7 +303,7 @@ Super-save auto-saves buffers when certain events happen - e.g. you switch betwe
 #+BEGIN_SRC emacs-lisp
 (use-package super-save
   :config
-  (super-save-mode +1))
+  (super-save-mode 1))
 #+END_SRC
 
 ** OS integration
