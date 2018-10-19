@@ -354,6 +354,50 @@ Use M-< and M-> to move to beginning and end of buffer.
   (move-text-default-bindings))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun emacs-smart-home ()
+  "Move between beginnings of visual lines, first non-blank character in the logical line and start of the logical line."
+  (interactive)
+  (let* ((oldpos (point))
+         (oldcol (current-column))
+         (visual-pos)
+         (text-pos))
+    (cond ((eq 0 oldcol) (beginning-of-line-text))
+          (t (save-excursion
+                (beginning-of-visual-line)
+                (setq visual-pos (point))
+                (beginning-of-line-text)
+                (setq text-pos (point)))
+              (if (and (eq oldpos visual-pos) (> visual-pos text-pos))
+                  (save-excursion
+                    (left-char)
+                    (beginning-of-visual-line)
+                    (setq visual-pos (point))))
+              (cond ((eq oldpos text-pos) (beginning-of-line))
+                    (t (goto-char (max visual-pos text-pos))))))))
+
+(defun emacs-smart-end ()
+  "Move between ends of visual lines and end of the logical line."
+  (interactive)
+  (let* ((oldpos (point))
+         (visual-pos)
+         (text-pos))
+    (save-excursion
+      (end-of-visual-line)
+      (setq visual-pos (point))
+      (end-of-line)
+      (setq text-pos (point)))
+    (if (and (eq oldpos visual-pos) (< visual-pos text-pos))
+        (save-excursion
+          (right-char)
+          (end-of-visual-line)
+          (setq visual-pos (point))))
+    (goto-char (min visual-pos text-pos))))
+
+(global-set-key (kbd "C-a") 'emacs-smart-home)
+(global-set-key (kbd "C-e") 'emacs-smart-end)
+#+END_SRC
+
 *** Expand Region
 Expand-region allows to gradually expand selection inside words, sentences, etc. =C-'= is bound to Org's =cycle through agenda files=, which I don't really use, so I unbind it here before assigning global shortcut for expansion.
 
