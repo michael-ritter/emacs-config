@@ -631,29 +631,30 @@ Inside code blocks, indentation should be correct depending on the source langua
   :ensure auctex
   :config
   (setq TeX-auto-save t)
+  (setq LaTeX-math-abbrev-prefix "#")
+  (setq TeX-source-correlate-mode t)
+  (setq TeX-source-correlate-method 'synctex)
+  ;; for SyncTeX, set the following in Skim:
+  ;; Command: /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+  ;; Arguments: --no-wait +%line "%file"
+  (setq TeX-source-correlate-start-server t)
+  (setq TeX-PDF-mode-parsed t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil)
+  (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+  (setq TeX-view-program-list '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
   (add-hook 'LaTeX-mode-hook (lambda ()
                                (turn-on-reftex)
                                (turn-on-visual-line-mode)
-                               (setq TeX-source-correlate-mode t)
-                               (setq TeX-source-correlate-method 'synctex)
-                               ;; for SyncTeX, set the following in Skim:
-                               ;; Command: /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
-                               ;; Arguments: --no-wait +%line "%file"
-                               (setq TeX-source-correlate-start-server t)
-                               (setq TeX-PDF-mode-parsed t)
-                               (setq TeX-parse-self t)
-                               (setq-default TeX-master nil)
-                               (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
-                               (setq TeX-view-program-list '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
                                (add-hook 'before-save-hook 'delete-trailing-whitespace)
                                )
             )
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   :bind (("C-c C-ö" . next-error)
          ("<C-return>" . LaTeX-insert-item)
          ("C-c s" . reftex-search-document)
          ("C-c g" . reftex-grep-document))
-)
+  )
 #+END_SRC
 
 * Custom Functions
