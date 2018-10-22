@@ -444,6 +444,7 @@ Comment lines.
 #+END_SRC
 
 *** Smart Parens
+
 Show parens and other pairs. Configure '' as non-pair for emacs-lisp-mode and add pairs for markdown-mode.
 
 #+BEGIN_SRC emacs-lisp
@@ -462,10 +463,18 @@ Show parens and other pairs. Configure '' as non-pair for emacs-lisp-mode and ad
   (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
   (define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
 
-)
+  )
+  #+END_SRC
+
+*** Find File at Point
+
+Opens the file the cursor is positioned on.
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x f") 'find-file-at-point)
 #+END_SRC
 
 ** Dired
+
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired
