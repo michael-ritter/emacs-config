@@ -578,6 +578,19 @@ Enable spellcheck on the fly for all text modes. This includes org, latex and La
   (add-hook 'after-init-hook 'global-company-mode))
 #+END_SRC
 
+*** YaSnippet
+
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :config
+ ; (use-package yasnippet-snippets
+ ;   :ensure t)
+  (yas-global-mode t)
+  (yas-reload-all)
+)
+#+END_SRC
+
 * Packages for specific applications
 ** Programming
 
