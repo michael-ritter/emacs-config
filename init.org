@@ -530,7 +530,7 @@ Shackle might be worth a try, but I'd like to get the rest sorted out first.
   :config
   (global-set-key "\C-s" 'swiper)
   (global-set-key "\C-r" 'swiper)
-)
+  )
 
 (use-package counsel
   :config
@@ -538,9 +538,9 @@ Shackle might be worth a try, but I'd like to get the rest sorted out first.
   (global-set-key (kbd "M-y") 'counsel-yank-pop)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file))
 
-(use-package smex)
-(use-package flx)
-(use-package avy)
+;(use-package smex)
+;(use-package flx)
+;(use-package avy)
 #+END_SRC
 
 Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
@@ -567,18 +567,7 @@ Enable spellcheck on the fly for all text modes. This includes org, latex and La
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
-** Auto completion using company mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package company
-  :config
-  (setq company-idle-delay 0.1)
-  (setq company-global-modes '(not org-mode markdown-mode))
-  (setq company-minimum-prefix-length 1)
-  (add-hook 'after-init-hook 'global-company-mode))
-#+END_SRC
-
-*** YaSnippet
+** YaSnippet
 
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
