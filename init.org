@@ -287,6 +287,12 @@ Nice and smooth scrolling behavior.
 #+END_SRC
 
 * Basic Configuration
+** Locale
+
+#+BEGIN_SRC emacs-lisp
+(setenv "LANG" "de_DE.UTF-8")
+#+END_SRC
+
 ** Which-Key
 Which key is great for learning Emacs, it shows a nice table of possible commands.
 
