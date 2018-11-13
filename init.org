@@ -286,6 +286,18 @@ Nice and smooth scrolling behavior.
 ;;  (setq smooth-scroll-margin 5)
 #+END_SRC
 
+** Outline Mode
+Outline-Magic defines a "cycle key". Also, we add \item as a minor headline to be able to cycle that one.
+#+BEGIN_SRC emacs-lisp
+(use-package outline-magic
+  :ensure t
+  :config
+  (define-key outline-minor-mode-map (kbd "<C-tab>") 'outline-cycle)
+  (setq TeX-outline-extra
+      '(("[ \t]*\\\\\\item\\b" 7))))
+#+END_SRC
+
+
 * Basic Configuration
 ** Locale
 
@@ -663,6 +675,7 @@ Configure AucTeX and company-mode-auctex
                                (turn-on-reftex)
                                (turn-on-visual-line-mode)
                                (add-hook 'before-save-hook 'delete-trailing-whitespace)
+                               (outline-minor-mode 1)
                                )
             )
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
