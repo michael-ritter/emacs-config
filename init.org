@@ -158,7 +158,6 @@ SF Mono font, remove the cruft and make the initial size bigger.
 (set-face-attribute 'default nil :font "SF Mono 14")
 (setq-default line-spacing 0)
 (setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
-(tool-bar-mode -1)
 #+END_SRC
 
 ** Parens
@@ -242,7 +241,7 @@ Revert (update) buffers automatically when underlying files are changed external
 (global-auto-revert-mode t)
 #+END_SRC
 
-Some basic things: Do not show startup messages, use y/n instead of yes/no everywhere, no scrollbar, no toolbar or menubar, highlight current line, delete selection.
+Some basic things: Do not show startup messages, use y/n instead of yes/no everywhere, no scrollbar, no toolbar, highlight current line, delete selection. The menubar is not disabled, because that would change emacs behaviour with respect to virtual desktops, see https://emacs.stackexchange.com/questions/28121/osx-switching-to-virtual-desktop-doesnt-focus-emacs.
 
 #+BEGIN_SRC emacs-lisp
 (setq
@@ -260,7 +259,6 @@ Some basic things: Do not show startup messages, use y/n instead of yes/no every
 (fset 'yes-or-no-p 'y-or-n-p)      ; y and n instead of yes and no everywhere else
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
-(menu-bar-mode -1)
 (delete-selection-mode 1)
 (global-unset-key (kbd "s-p"))
 (global-hl-line-mode t)
@@ -296,7 +294,6 @@ Outline-Magic defines a "cycle key". Also, we add \item as a minor headline to b
   (setq TeX-outline-extra
       '(("[ \t]*\\\\\\item\\b" 7))))
 #+END_SRC
-
 
 * Basic Configuration
 ** Locale
@@ -689,6 +686,22 @@ Configure AucTeX and company-mode-auctex
   :ensure t
   :config
   (company-auctex-init))
+#+END_SRC
+
+Add support for the environments pNiceMatrix and pNiceArrayC
+
+#+BEGIN_SRC emacs-lisp
+(TeX-add-style-hook
+ "pNiceMatrix"
+ (lambda ()
+   (LaTeX-add-environments
+    '("pNiceMatrix"))))
+
+(TeX-add-style-hook
+ "pNiceArrayC"
+ (lambda ()
+   (LaTeX-add-environments
+    '("pNiceArrayC" "Columns"))))
 #+END_SRC
 
 * Custom Functions
