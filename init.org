@@ -300,6 +300,7 @@ Outline-Magic defines a "cycle key". Also, we add \item as a minor headline to b
 
 #+BEGIN_SRC emacs-lisp
 (setenv "LANG" "de_DE.UTF-8")
+(set-language-environment "UTF-8")
 #+END_SRC
 
 ** Which-Key
