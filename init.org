@@ -296,6 +296,11 @@ Outline-Magic defines a "cycle key". Also, we add \item as a minor headline to b
 #+END_SRC
 
 * Basic Configuration
+** Startup
+#+BEGIN_SRC emacs-lisp
+(setq exec-path-from-shell-check-startup-files nil)
+#+END_SRC
+
 ** Locale
 
 #+BEGIN_SRC emacs-lisp
