@@ -472,6 +472,7 @@ Show parens and other pairs. Configure '' as non-pair for emacs-lisp-mode and ad
 (use-package smartparens
   :config
   (require 'smartparens-config)
+  (require 'smartparens-latex)
   (smartparens-global-mode t)
   (show-smartparens-global-mode t)
   (setq sp-show-pair-delay 0)
@@ -481,9 +482,22 @@ Show parens and other pairs. Configure '' as non-pair for emacs-lisp-mode and ad
   (sp-local-pair 'markdown-mode "_" "_")
   (sp-local-pair 'markdown-mode "**" "**")
   (sp-local-pair 'markdown-mode "`" "`")
+  (sp-with-modes '(
+                   tex-mode
+                   plain-tex-mode
+                   latex-mode
+                   LaTeX-mode
+                   )
+    (sp-local-pair '"``" "''"
+                   :trigger "\""
+                   :actions :rem)
+    (sp-local-pair "`" "'"
+                 :actions :rem)
+    )
+;  (sp-local-pair 'LaTeX-mode "\\left(" "\\right)" :trigger "\\l(")
+;  (sp-local-pair 'LaTeX-mode "\\left[" "\\right]" :trigger "\\l[")
 ;  (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
 ;  (define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
-
   )
   #+END_SRC
 
@@ -675,6 +689,7 @@ Configure AucTeX and company-mode-auctex
   (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
   (setq TeX-view-program-list '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
   (add-hook 'LaTeX-mode-hook (lambda ()
+                               (local-unset-key "\"")
                                (turn-on-reftex)
                                (turn-on-visual-line-mode)
                                (add-hook 'before-save-hook 'delete-trailing-whitespace)
