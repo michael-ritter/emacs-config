@@ -679,7 +679,7 @@ Configure AucTeX and company-mode-auctex
   :ensure auctex
   :config
   (setq TeX-auto-save t)
-  (setq LaTeX-math-abbrev-prefix "#")
+  (setq LaTeX-math-abbrev-prefix "´")
   (setq TeX-source-correlate-mode t)
    ;; Arguments: --no-wait +%line "%file"
   (setq TeX-source-correlate-start-server t)
