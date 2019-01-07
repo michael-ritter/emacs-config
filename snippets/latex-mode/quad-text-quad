@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: quad-text-quad
+# key: qtq
+# --
+\quad \text{${1:text}} \quad $0
