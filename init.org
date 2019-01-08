@@ -319,12 +319,13 @@ Which key is great for learning Emacs, it shows a nice table of possible command
 #+END_SRC
 
 ** Super Save
-Super-save auto-saves buffers when certain events happen - e.g. you switch between buffers, an Emacs frame loses focus, etc.
+Super-save auto-saves buffers when certain events happen - e.g. you switch between buffers, an Emacs frame loses focus, etc. We switch on super-save and disable auto-save in turn.
 
 #+BEGIN_SRC emacs-lisp
 (use-package super-save
   :config
-  (super-save-mode 1))
+  (super-save-mode 1)
+  (setq auto-save-default nil))
 #+END_SRC
 
 ** OS integration
@@ -679,6 +680,7 @@ Configure AucTeX and company-mode-auctex
   :ensure auctex
   :config
   (setq TeX-auto-save t)
+  (setq TeX-save-query nil)
   (setq LaTeX-math-abbrev-prefix "´")
   (setq TeX-source-correlate-mode t)
    ;; Arguments: --no-wait +%line "%file"
