@@ -509,6 +509,12 @@ Opens the file the cursor is positioned on.
 (global-set-key (kbd "C-x f") 'find-file-at-point)
 #+END_SRC
 
+** Outshine Mode
+#+BEGIN_SRC emacs-lisp
+(use-package outshine
+:config
+(add-hook 'LaTeX-mode-hook 'outshine-mode))
+#+END_SRC
 ** Dired
 
 
