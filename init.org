@@ -623,6 +623,17 @@ Enable spellcheck on the fly for all text modes. This includes org, latex and La
 #+END_SRC
 
 * Packages for specific applications
+** Version Control
+*** Magit
+
+Magit is the git interface for emacs
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status)))
+#+END_SRC
+
 ** Programming
 
 Here are all the packages needed for programming languages and formats.
