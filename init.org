@@ -716,6 +716,14 @@ Configure AucTeX and company-mode-auctex
                                )
             )
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'add-my-latex-environments)
+  (defun add-my-latex-environments ()
+    (LaTeX-add-environments
+     '("align" LaTeX-env-label)
+     '("align*" LaTeX-env-label)
+     '("pNiceMatrix" LaTeX-env-label)
+     '("pNiceArrayC" LaTeX-env-label)
+     '("equation*" LaTeX-env-label)))
   :bind (("C-c C-ö" . next-error)
          ("<C-return>" . LaTeX-insert-item)
          ("C-c s" . reftex-search-document)
@@ -726,22 +734,6 @@ Configure AucTeX and company-mode-auctex
   :ensure t
   :config
   (company-auctex-init))
-#+END_SRC
-
-Add support for the environments pNiceMatrix and pNiceArrayC
-
-#+BEGIN_SRC emacs-lisp
-(TeX-add-style-hook
- "pNiceMatrix"
- (lambda ()
-   (LaTeX-add-environments
-    '("pNiceMatrix"))))
-
-(TeX-add-style-hook
- "pNiceArrayC"
- (lambda ()
-   (LaTeX-add-environments
-    '("pNiceArrayC" "Columns"))))
 #+END_SRC
 
 * Custom Functions
