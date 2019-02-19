@@ -4,7 +4,7 @@
 #+PROPERTY: header-args :tangle yes
 #+STARTUP: overview
 
-![GitHub](https://img.shields.io/github/license/michael-ritter/emacs-config.svg?style=flat)
+[[https://img.shields.io/github/license/michael-ritter/emacs-config.svg?style=flat]]
 
 * Credits
 Initially inspired by [[https://github.com/freetonik/emacs-dotfiles][Rakhim Davletkaliyev's]] setup of [[https://github.com/freetonik/emacscast][EmacsCast]].
