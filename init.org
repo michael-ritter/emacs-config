@@ -4,6 +4,8 @@
 #+PROPERTY: header-args :tangle yes
 #+STARTUP: overview
 
+![GitHub](https://img.shields.io/github/license/michael-ritter/emacs-config.svg?style=flat)
+
 * Credits
 Initially inspired by [[https://github.com/freetonik/emacs-dotfiles][Rakhim Davletkaliyev's]] setup of [[https://github.com/freetonik/emacscast][EmacsCast]].
 
@@ -760,3 +762,17 @@ Store custom-file separately, don't freak out when it's not found.
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 #+END_SRC
+* License
+Copyright 2019 Michael Ritter
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
