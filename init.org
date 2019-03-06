@@ -49,11 +49,14 @@ Initialize package and add Melpa source.
     (proto (if no-ssl "http" "https")))
     ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
     (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-    ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-    (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-(add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
-(package-initialize)
+    (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+    (add-to-list 'package-pinned-packages '(spaceline . "melpa-stable"))
+    (add-to-list 'package-pinned-packages '(spaceline-all-the-icons . "melpa-stable"))
+    (add-to-list 'package-pinned-packages '(all-the-icons . "melpa-stable"))
+                 (when (< emacs-major-version 24)
+                   ;; For important compatibility libraries like cl-lib
+                   (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+    (package-initialize)
 #+END_SRC
 
 Install use-package.
@@ -160,6 +163,27 @@ SF Mono font, remove the cruft and make the initial size bigger.
 (set-face-attribute 'default nil :font "SF Mono 14")
 (setq-default line-spacing 0)
 (setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
+#+END_SRC
+
+Icons from all-the-icons, see https://github.com/domtronn/all-the-icons.el
+Please do `M-x all-the-icons-install-fonts` after package installation
+
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons)
+#+END_SRC
+
+** Spaceline
+#+BEGIN_SRC emacs-lisp
+(use-package spaceline
+  :demand t
+  :init
+  (setq powerline-default-separator 'arrow-fade)
+  :config
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme))
+(use-package spaceline-all-the-icons
+  :after spaceline
+  :config (spaceline-all-the-icons-theme))
 #+END_SRC
 
 ** Parens
