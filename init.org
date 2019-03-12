@@ -183,7 +183,8 @@ Please do `M-x all-the-icons-install-fonts` after package installation
   (spaceline-spacemacs-theme))
 (use-package spaceline-all-the-icons
   :after spaceline
-  :config (spaceline-all-the-icons-theme))
+  :config (spaceline-all-the-icons-theme)
+  (spaceline-toggle-all-the-icons-process-on))
 #+END_SRC
 
 ** Parens
