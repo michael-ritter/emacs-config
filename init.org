@@ -136,15 +136,19 @@ This helps get rid of =functions might not be defined at runtime= warnings. See 
 
 * Visuals
 ** General Themeing
-Dark frame
+*** Dark frame
 
 #+BEGIN_SRC emacs-lisp
 (when (memq window-system '(mac ns))
-  (add-to-list 'default-frame-alist '(ns-appearance . dark)) ;; {light, dark}
-  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t)))
+  ;; Fancy titlebar for MacOS
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (add-to-list 'default-frame-alist '(ns-appearance . dark))  ;; {light, dark}
+  (setq ns-use-proxy-icon  nil)
+  (setq frame-title-format nil)
+)
 #+END_SRC
 
-Set smyx and tsdh-light as standard themes.
+*** Set smyx and tsdh-light as standard themes.
 
 #+BEGIN_SRC emacs-lisp
 (use-package smyx-theme
@@ -157,213 +161,66 @@ Set smyx and tsdh-light as standard themes.
 
 #+END_SRC
 
-SF Mono font, remove the cruft and make the initial size bigger.
+*** SF Mono font, remove the cruft and make the initial size bigger.
 
 #+BEGIN_SRC emacs-lisp
 (set-face-attribute 'default nil :font "SF Mono 14")
-(setq-default line-spacing 0)
+;(setq-default line-spacing 0)
+;; Ligatures in Emacs
+;; https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
+(mac-auto-operator-composition-mode t)
 (setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
 #+END_SRC
 
-** Mode Line: Powerline
-
-Taken in part from https://github.com/howardabrams/dot-files/blob/master/emacs-mode-line.org.
-
-The [[http://www.emacswiki.org/emacs/PowerLine][PowerLine]] project can really clean up the mode line.
+*** COMMENT Fira Code font, add ligatures
 
 #+BEGIN_SRC emacs-lisp
-(use-package powerline
-      :ensure t
-      :init
-      (setq powerline-default-separator 'curve
-            powerline-default-separator-dir (quote (left . right))
-            powerline-height 28
-            powerline-display-buffer-size nil
-            powerline-display-hud nil
-            powerline-display-mule-info nil
-            powerline-gui-use-vcs-glyph t
-            powerline-inactive1 '((t (:background "grey11" :foreground "#c5c8c6")))
-            powerline-inactive2 '((t (:background "grey20" :foreground "#c5c8c6")))))
+;;; Fira code
+
+;; Ligatures in Emacs
+;; https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
+
+(when (window-system)
+  (set-frame-font "Fira Code-14"))
+(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+               (36 . ".\\(?:>\\)")
+               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+               (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+               (48 . ".\\(?:x[a-zA-Z]\\)")
+               (58 . ".\\(?:::\\|[:=]\\)")
+               (59 . ".\\(?:;;\\|;\\)")
+               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+               (91 . ".\\(?:]\\)")
+               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+               (94 . ".\\(?:=\\)")
+               (119 . ".\\(?:ww\\)")
+               (123 . ".\\(?:-\\)")
+               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
+               )
+             ))
+  (dolist (char-regexp alist)
+    (set-char-table-range composition-function-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC
 
-*** Icons for File Status
+** Mode Line: Doom Modeline
 
-   Let's make the modification status a bit more useful... and iconic:
+Doom Modeline from https://github.com/seagle0128/doom-modeline
 
-   #+BEGIN_SRC emacs-lisp
-    (defun powerline-get-icon (name alt-sym help-message)
-      "Returns a propertized icon if available, otherwise, returns ALT-SYM."
-      (propertize alt-sym 'help-echo help-message))
-
-    (defun powerline-modified ()
-      (condition-case ex
-          (let ((state (vc-git-state (buffer-file-name))))
-            (cond ((buffer-modified-p)  (powerline-get-icon "pencil" "✦" "Modified buffer"))
-                  ((eq state 'edited)   (powerline-get-icon "pencil" "✦" "Modified buffer, unregistered changes"))
-                  ((eq state 'unregistered) (powerline-get-icon "question" "❓" "Unregistered file in VCS"))
-                  ((eq state 'missing)  (powerline-get-icon "exclamation" "⁈" "File exists only in VCS, not on the hard disk"))
-                  ((eq state 'ignored)  (powerline-get-icon "ban" "♟" "Ignored file in VCS"))
-                  ((eq state 'added)    (powerline-get-icon "plus" "➕" "File will be registered in VCS in the next commit"))
-                  (t " ")))
-        (error (powerline-get-icon "exclamation" "⁈" (car ex)))))
-  #+END_SRC
-
-*** Program Modes
-
-  In order to check if the current mode matches a particular mode, we
-  need to do something like:
-
-  #+BEGIN_SRC emacs-lisp
-    (defun is-mode-p (mode)
-      "Predicate to return `true' if the current buffer's major mode matches the requested MODE."
-      (buffer-local-value 'major-mode (current-buffer))
-      (eq major-mode mode))
-  #+END_SRC
-
-  Display the current Python virtual environment, using =pyenv=:
-
-  #+BEGIN_SRC emacs-lisp :tangle no
-    (defun current-python-mode-line ()
-      "Display the Python virtual environment and version if `python-mode' is enabled. Nil otherwise."
-      (ignore-errors
-        (when (and (is-mode-p 'python-mode) (pyenv-mode-version))
-          (concat "🐍" (pyenv-mode-version)))))
-  #+END_SRC
-
-  #+BEGIN_SRC emacs-lisp
-    (defun current-python-mode-line ()
-      "Display the Python virtual environment and version if `python-mode' is enabled. Nil otherwise."
-      (ignore-errors
-        (when (and (is-mode-p 'python-mode) (pyenv-mode-version))
-          (concat
-           (propertize "\xe928 "
-                       'face `(:family "all-the-icons")
-                       'display '(raise -0.1))
-           (pyenv-mode-version)))))
-  #+END_SRC
-
-  Put everything together, where we will either display the Ruby,
-  Python, or if no particular language, display the eyebrowse:
-
-  #+BEGIN_SRC emacs-lisp
-    (defun powerline-lang-version ()
-      "docstring"
-      (or (current-python-mode-line)
-          (when (derived-mode-p 'prog-mode)
-            which-func-format)
-          " "))
-  #+END_SRC
-
-*** Project Details
-
-  Clean up the project location:
-
-  #+BEGIN_SRC emacs-lisp
-    (defun powerline-project-vc ()
-      (ignore-errors
-        (when (projectile-project-p)
-          (propertize (projectile-project-name)
-                      'help-echo (format "Base: %s"
-                                         (projectile-project-root))))))
-  #+END_SRC
-
-  While the =use-package= project diminishes most minor modes, I still
-  have one left:
-
-  #+BEGIN_SRC emacs-lisp
-    (defun trim-minor-modes (s)
-      (replace-regexp-in-string "ARev" "↺" s))
-  #+END_SRC
-
-*** Mode Line Format
-
-  Let's put everything together into our mode-line:
-
-  #+BEGIN_SRC emacs-lisp
-    (setq-default mode-line-format
-          '("%e"
-            (:eval
-             (let* ((active (powerline-selected-window-active))
-                    (mode-line-buffer-id (if active 'mode-line-buffer-id 'mode-line-buffer-id-inactive))
-                    (mode-line (if active 'mode-line 'mode-line-inactive))
-                    (face1 (if active 'powerline-active1 'powerline-inactive1))
-                    (face2 (if active 'powerline-active2 'powerline-inactive2))
-;                    (eface (powerline-evil-face active))
-                    (separator-left (intern (format "powerline-%s-%s"
-                                                    (powerline-current-separator)
-                                                    (car powerline-default-separator-dir))))
-                    (separator-right (intern (format "powerline-%s-%s"
-                                                     (powerline-current-separator)
-                                                     (cdr powerline-default-separator-dir))))
-                    (lhs (list
-                          ;; Section 1: File status and whatnot
-                          (powerline-raw (powerline-modified) face1 'l)
-                          ;; (powerline-buffer-size mode-line 'l)
-                          (powerline-raw mode-line-client face1 'l)
-                          (powerline-raw "  " face1 'l)
-
-                          ;; Section 2: ( Buffer Name ) ... bright
-                          (funcall separator-right face1 mode-line)
-                          (powerline-buffer-id mode-line-buffer-id 'l)
-                          (powerline-raw " " mode-line)
-                          (funcall separator-left mode-line face1)
-
-                          ;; Section 3: Git ... dark
-                          (powerline-narrow face1 'l)
-                          (powerline-raw " " face1)
-                          (powerline-raw (powerline-project-vc) face1 'l)
-                          (powerline-vc face1 'l)))
-
-                    (rhs (list (powerline-raw global-mode-string face1 'r)
-                               ;; Section 1: Language-specific ... optional
-;                               (powerline-raw (powerline-lang-version) face1 'r)
-                               ;; Section 2: Function Name or Row Number
-                               (funcall separator-right mode-line eface)
-;                               (powerline-raw (powerline-evil-state) eface 'r)
-                               (powerline-raw "%4l:%3c" eface 'r)))
-
-                    (center (list (powerline-raw " " face1)
-                                  (funcall separator-left face1 face2)
-                                  (when (and (boundp 'erc-track-minor-mode) erc-track-minor-mode)
-                                    (powerline-raw erc-modified-channels-object face2 'l))
-                                  (powerline-major-mode face2 'l)
-                                  (powerline-process face2)
-                                  (powerline-raw " :" face2)
-                                  (powerline-minor-modes face2 'l)
-                                  (powerline-raw " " face2)
-                                  (funcall separator-right face2 face1))))
-               (concat (powerline-render lhs)
-                       (powerline-fill-center face1 (/ (powerline-width center) 2.0))
-                       (powerline-render center)
-                       (powerline-fill face1 (powerline-width rhs))
-                       (powerline-render rhs))))))
-  #+END_SRC
-
-*** Technical Artifacts
-
-  Make sure that we can simply =require= this library.
-
-  #+BEGIN_SRC emacs-lisp
-  (provide 'init-mode-line)
-  #+END_SRC
-
-  Before you can build this on a new system, make sure that you put
-  the cursor over any of these properties, and hit: =C-c C-c=
-
-** COMMENT Mode Line: Smart Mode Line
 #+BEGIN_SRC emacs-lisp
-(use-package smart-mode-line
-  :ensure t
-  :init (add-hook 'after-init-hook 'sml/setup)
-  :config
-  ;; Fix a couple of long project names with an icon:
-  (add-to-list 'sml/replacer-regexp-list '("^~/Documents/LEHRE/" "[L]"))
-
-  (sml/apply-theme 'dark)
-
-  ;; Since I almost always use Git, let's shorten its display:
-  (setcdr (assq 'vc-mode mode-line-format)
-    '((:eval (replace-regexp-in-string "^ Git" "\xe0a0" vc-mode)))))
+(use-package doom-modeline
+      :ensure t
+      :hook (after-init . doom-modeline-mode))
 #+END_SRC
 
 ** Parens
@@ -701,6 +558,7 @@ Show parens and other pairs. Configure '' as non-pair for emacs-lisp-mode and ad
     (sp-local-pair "`" "'"
                  :actions :rem)
     )
+    (sp-pair "$" "$"  :actions '(wrap autoskip navigate))
 ;  (sp-local-pair 'LaTeX-mode "\\left(" "\\right)" :trigger "\\l(")
 ;  (sp-local-pair 'LaTeX-mode "\\left[" "\\right]" :trigger "\\l[")
 ;  (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
