@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: opti
+# key: opti
+# --
+\begin{${1:maxi*}}%
+   {${2:x}}% optimization variable
+   {${3:c^Tx}}% objective function
+   {}% \label{...} command
+   {}% optimization result term
+   \addConstraint{${4:Ax}}{${5:\le b}}%
+\end{maxi*}
