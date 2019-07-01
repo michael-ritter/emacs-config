@@ -630,12 +630,12 @@ Shackle might be worth a try, but I'd like to get the rest sorted out first.
   (setq ivy-initial-inputs-alist nil)
   (setq ivy-re-builders-alist
       '((swiper . ivy--regex-plus)
+        (swiper-isearch . ivy--regex-plus)
         (t      . ivy--regex-fuzzy))))   ;; enable fuzzy searching everywhere except for Swiper
 
 (use-package swiper
   :config
-  (global-set-key "\C-s" 'swiper)
-  (global-set-key "\C-r" 'swiper)
+  (global-set-key "\C-s" 'swiper-isearch)
   )
 
 (use-package counsel
@@ -674,13 +674,40 @@ Enable spellcheck on the fly for all text modes. This includes org, latex and La
 #+END_SRC
 
 ** Autocompletion (Company-Mode)
+
 #+BEGIN_SRC emacs-lisp
 (use-package company
 :ensure t
 :config
 (setq company-idle-delay 0)
 (setq company-minimum-prefix-length 4)
-(global-company-mode t))
+(global-company-mode t)
+)
+;; Add yasnippet support for all company backends
+;; https://github.com/syl20bnr/spacemacs/pull/179
+(defvar company-mode/enable-yas t
+  "Enable yasnippet for all backends.")
+
+(defun company-mode/backend-with-yas (backend)
+  (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+      backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+
+(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+#+END_SRC
+
+** Projectile
+Projectile is a project management package, see https://github.com/bbatsov/projectile.
+
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :bind (("C-x s" . projectile-switch-open-project)
+	 ("C-x p" . projectile-switch-project))
+  :config
+  (projectile-global-mode)
+  (setq projectile-enable-caching t))
 #+END_SRC
 
 ** YaSnippet
