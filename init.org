@@ -148,7 +148,7 @@ This helps get rid of =functions might not be defined at runtime= warnings. See 
 )
 #+END_SRC
 
-*** Set smyx and tsdh-light as standard themes.
+*** COMMENT Set smyx and tsdh-light as standard themes.
 
 #+BEGIN_SRC emacs-lisp
 (use-package smyx-theme
@@ -158,6 +158,26 @@ This helps get rid of =functions might not be defined at runtime= warnings. See 
 (if (display-graphic-p)
     (load-theme 'smyx t)
 (load-theme 'tsdh-light))
+
+#+END_SRC
+
+*** Set moe and tsdh-light as standard themes.
+
+Moe theme is available at https://github.com/kuanyui/moe-theme.el
+#+BEGIN_SRC emacs-lisp
+(use-package moe-theme
+  :ensure t
+  :config
+;; Show highlighted buffer-id as decoration. (Default: nil)
+  (setq moe-theme-highlight-buffer-id t)
+  (moe-dark)
+  (moe-theme-set-color 'green)
+)
+;; Load a dark theme if in GUI, load a light theme if in NW
+(if (display-graphic-p)
+    (load-theme 'moe-dark t)
+  ;; Choose a color for mode-line.(Default: blue)
+  (load-theme 'tsdh-light))
 
 #+END_SRC
 
@@ -213,7 +233,7 @@ This helps get rid of =functions might not be defined at runtime= warnings. See 
                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC
 
-** Mode Line: Doom Modeline
+** COMMENT Mode Line: Doom Modeline
 
 Doom Modeline from https://github.com/seagle0128/doom-modeline
 
@@ -221,6 +241,26 @@ Doom Modeline from https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
       :ensure t
       :hook (after-init . doom-modeline-mode))
+#+END_SRC
+
+** Mode Line: Telephone Line
+Telephone Modeline from https://github.com/dbordak/telephone-line/blob/master/examples.org
+
+#+BEGIN_SRC emacs-lisp
+(use-package telephone-line
+      :ensure t
+      :config
+      (setq telephone-line-height 20)
+      (setq telephone-line-lhs
+            '((nil . (telephone-line-atom-encoding-segment telephone-line-major-mode-segment))
+              (accent   . (telephone-line-airline-position-segment))
+              (nil . (telephone-line-projectile-buffer-segment ))))
+      (setq telephone-line-rhs
+            '((nil . (telephone-line-process-segment))
+            (accent . (telephone-line-vc-segment telephone-line-buffer-modified-segment))))
+      (require 'telephone-line)
+      (require 'telephone-line-config)
+      (telephone-line-mode t))
 #+END_SRC
 
 ** Parens
@@ -706,7 +746,7 @@ Projectile is a project management package, see https://github.com/bbatsov/proje
   :bind (("C-x s" . projectile-switch-open-project)
 	 ("C-x p" . projectile-switch-project))
   :config
-  (projectile-global-mode)
+  (projectile-mode +1)
   (setq projectile-enable-caching t))
 #+END_SRC
 
