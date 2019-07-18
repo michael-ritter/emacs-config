@@ -233,17 +233,29 @@ Moe theme is available at https://github.com/kuanyui/moe-theme.el
                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC
 
-** COMMENT Mode Line: Doom Modeline
+** Mode Line: Doom Modeline
 
 Doom Modeline from https://github.com/seagle0128/doom-modeline
+This package requires the fonts included with all-the-icons to be installed.
+ Run M-x all-the-icons-install-fonts to do so.
 
 #+BEGIN_SRC emacs-lisp
 (use-package doom-modeline
       :ensure t
+      :config
+      (doom-modeline-def-segment latex-compile
+        "For indications on auctex compilation"
+        (if (and (boundp 'compilation-in-progress) compilation-in-progress)
+            (propertize "Compiling..." 'face 'doom-modeline-info)
+          ""))
+      :custom
+      (doom-modeline-major-mode-color-icon nil)
+      (doom-modeline-minor-modes nil)
+      (doom-modeline-buffer-file-name-style 'truncate-with-project)
       :hook (after-init . doom-modeline-mode))
 #+END_SRC
 
-** Mode Line: Telephone Line
+** COMMENT Mode Line: Telephone Line
 Telephone Modeline from https://github.com/dbordak/telephone-line/blob/master/examples.org
 
 #+BEGIN_SRC emacs-lisp
