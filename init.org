@@ -586,7 +586,9 @@ Multiple cusors are a must. Make <return> insert a newline; multiple-cursors-mod
   (global-set-key (kbd "M-d") 'mc/mark-next-like-this)
   (global-set-key (kbd "M-D") 'mc/edit-beginnings-of-lines)
   (global-set-key (kbd "C-M-D") 'mc/mark-all-dwim)
-  (define-key mc/keymap (kbd "<return>") nil))
+  (define-key mc/keymap (kbd "<return>") nil)
+  (global-unset-key (kbd "M-<down-mouse-1>"))
+  (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click))
 #+END_SRC
 
 Comment lines.
