@@ -781,11 +781,10 @@ Projectile is a project management package, see https://github.com/bbatsov/proje
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :ensure t
-  :bind (("C-x s" . projectile-switch-open-project)
-	 ("C-x p" . projectile-switch-project))
   :config
-  (projectile-mode +1)
-  (setq projectile-enable-caching t))
+  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (projectile-mode +1))
 #+END_SRC
 
 ** YaSnippet
