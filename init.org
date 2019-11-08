@@ -720,8 +720,8 @@ Shackle might be worth a try, but I'd like to get the rest sorted out first.
   :config
   (global-set-key (kbd "M-x") 'counsel-M-x)
   (global-set-key (kbd "M-y") 'counsel-yank-pop)
-  (global-set-key (kbd "C-x C-f") 'counsel-find-file))
-
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+  (setq counsel-find-file-ignore-regexp "\\.\(elc\|aux\|fdb_latexmk\|fls\|bcf\|ilg\|ind\|log\|out\|blg\|run\\.xml\|toc\|script\|idx\|figlist\)\\'"))
 ;(use-package smex)
 ;(use-package flx)
 ;(use-package avy)
