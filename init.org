@@ -408,17 +408,17 @@ Nice and smooth scrolling behavior.
 ;;  (setq smooth-scroll-margin 5)
 #+END_SRC
 
-** Outline Mode
+** Outline Mode and Indent-Tools
 Outline-Magic defines a "cycle key". Also, we add \item as a minor headline to be able to cycle that one.
 #+BEGIN_SRC emacs-lisp
 (use-package outline-magic
   :ensure t
   :config
-  (define-key outline-minor-mode-map (kbd "<C-tab>") 'outline-cycle)
+  (define-key outline-minor-mode-map (kbd "<backtab>") 'outline-cycle)
+  (setq outline-regexp "  *")
   (setq TeX-outline-extra
       '(("[ \t]*\\\\\\item\\b" 7))))
 #+END_SRC
-
 ** Eyebrowse
 Eyebrowse is a workspace manager. Use M-1, M-2, M-3, M-4 to switch between 4 workspaces.
 https://github.com/wasamasa/eyebrowse
