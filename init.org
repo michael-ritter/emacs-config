@@ -414,7 +414,7 @@ Outline-Magic defines a "cycle key". Also, we add \item as a minor headline to b
 (use-package outline-magic
   :ensure t
   :config
-  (define-key outline-minor-mode-map (kbd "<backtab>") 'outline-cycle)
+  (define-key outline-minor-mode-map (kbd "C-f") 'outline-cycle)
   (setq outline-regexp "  *")
   (setq TeX-outline-extra
       '(("[ \t]*\\\\\\item\\b" 7))))
