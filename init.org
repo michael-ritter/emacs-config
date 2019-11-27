@@ -899,7 +899,7 @@ Configure AucTeX and company-mode-auctex
      '("align" LaTeX-env-label)
      '("align*" LaTeX-env-label)
      '("pNiceMatrix" LaTeX-env-label)
-     '("pNiceArrayC" LaTeX-env-label)
+     '("pNiceArray" LaTeX-env-label)
      '("equation*" LaTeX-env-label)))
   :bind (("C-c C-ö" . next-error)
          ("<C-return>" . LaTeX-insert-item)
