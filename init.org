@@ -192,7 +192,7 @@ Moe theme is available at https://github.com/kuanyui/moe-theme.el
 (setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
 #+END_SRC
 
-*** Fira Code font, add ligatures
+*** Fira Code font with ligatures
 
 #+BEGIN_SRC emacs-lisp
 (set-face-attribute 'default nil :font "Fira Code 14")
@@ -202,46 +202,25 @@ Moe theme is available at https://github.com/kuanyui/moe-theme.el
 (mac-auto-operator-composition-mode)
 #+END_SRC
 
-*** COMMENT Old Fira Code Setup
+*** COMMENT JetBrains Mono Font
 #+BEGIN_SRC emacs-lisp
-;;; Fira code
-
+(set-face-attribute 'default nil :font "JetBrains Mono 14")
+(setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
 ;; Ligatures in Emacs
 ;; https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
-
-(when (window-system)
-  (set-frame-font "Fira Code-14"))
-(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-               (36 . ".\\(?:>\\)")
-               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-               (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-               (48 . ".\\(?:x[a-zA-Z]\\)")
-               (58 . ".\\(?:::\\|[:=]\\)")
-               (59 . ".\\(?:;;\\|;\\)")
-               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-               (91 . ".\\(?:]\\)")
-               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-               (94 . ".\\(?:=\\)")
-               (119 . ".\\(?:ww\\)")
-               (123 . ".\\(?:-\\)")
-               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
-               )
-             ))
-  (dolist (char-regexp alist)
-    (set-char-table-range composition-function-table (car char-regexp)
-                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
+(mac-auto-operator-composition-mode)
 #+END_SRC
 
+*** COMMENT Ayu Theme
+#+BEGIN_SRC emacs-lisp
+(setq custom-theme-directory "~/.emacs.d/themes")
+#+END_SRC
+*** Solarized Dark Theme
+#+BEGIN_SRC emacs-lisp
+(load-theme 'solarized-dark t)
+(setq solarized-use-variable-pitch nil)
+(setq solarized-scale-org-headlines nil)
+#+END_SRC
 ** Mode Line: Doom Modeline
 
 Doom Modeline from https://github.com/seagle0128/doom-modeline
@@ -435,6 +414,15 @@ https://github.com/wasamasa/eyebrowse
 #+END_SRC
 
 * Basic Configuration
+** Diminish
+Do not show some common modes in the modeline, to save space
+
+#+BEGIN_SRC emacs-lisp
+(use-package diminish
+  :defer 5
+  :config
+  (diminish 'org-indent-mode))
+#+END_SRC
 ** Startup
 #+BEGIN_SRC emacs-lisp
 (setq exec-path-from-shell-check-startup-files nil)
@@ -443,8 +431,7 @@ https://github.com/wasamasa/eyebrowse
 ** Locale
 
 #+BEGIN_SRC emacs-lisp
-(setenv "LANG" "de_DE.UTF-8")
-(set-language-environment "UTF-8")
+(setenv "LANG" "de_DE.UTF-8")(set-language-environment "UTF-8")
 #+END_SRC
 
 ** Which-Key
@@ -452,9 +439,13 @@ Which key is great for learning Emacs, it shows a nice table of possible command
 
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
+  :ensure t
+  :diminish
   :config
   (which-key-mode)
-  (setq which-key-idle-delay 0.5))
+  (which-key-setup-side-window-bottom) ;display which key window on bottom
+  (setq which-key-idle-delay 0.5) ; delay which key window by 0.5 seconds
+)
 #+END_SRC
 
 ** Super Save
@@ -681,22 +672,80 @@ I'm still not happy with the way new windows are spawned. For now, at least, let
 ;; (setq split-width-threshold nil)
 #+END_SRC
 
-Move between windows with Meta-Shift-Arrow.
+Move between windows with Meta-Shift-Arrow. Does not work in org-mode, as that captures all usefull arrow combinations :-(.
 
 #+BEGIN_SRC emacs-lisp
 (use-package windmove
   :config
-  (global-set-key (kbd "M-S-<left>")  'windmove-left)
   (global-set-key (kbd "M-S-<right>")  'windmove-right)
+  (global-set-key (kbd "M-S-<left>")  'windmove-left)
   (global-set-key (kbd "M-S-<up>")  'windmove-up)
   (global-set-key (kbd "M-S-<down>")  'windmove-down)
 )
 #+END_SRC
+
+change buffer names for files with the same names
+
+#+BEGIN_SRC emacs-lisp
+(require 'uniquify)
+(setq uniquify-separator "/"               ;; The separator in buffer names.
+      uniquify-buffer-name-style 'forward) ;; names/in/this/style
+#+END_SRC
+
 ** Shackle
 
 Shackle might be worth a try, but I'd like to get the rest sorted out first.
 
-** Ivy, Swiper and Counsel
+** Helm
+Helm find files trick taken from https://notabug.org/stefano-m/.emacs.d/src/projectile/init.d/helm.cfg.el.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm
+  :ensure t
+  :diminish
+  :custom
+  (helm-completion-style 'emacs)
+  :init (helm-mode t)
+  :config
+  (setq helm-ff-newfile-prompt-p nil
+        helm-ff-skip-boring-files t
+        helm-ff-ido-style-backspace 'always
+        helm-ff-auto-update-initial-value t
+        helm-ff--auto-update-state t
+        completion-styles '(helm-flex)); set to '(flex) instead of '(helm-flex) on emacs 27)
+  (cl-loop for ext in '("\\.elc$" "\\.py[cod]$" "\\.aux$" "\\.auxlock$" "\\.bbl$" "\\.bcf$" "\\.blg$" "\\.cb2?$" "\\.fdb_latexmk$" "\\.fls$" "\\.idx$" "\\.ilg$" "\\.ind$" "\\.log$" "\\.out$" "\\.run\\.xml$" "\\.synctex\\.gz$" "\\.toc$" "\\.xsim$" "\\.script$" "\\.table$" "\\.figlist$")
+           do (add-to-list 'helm-boring-file-regexp-list ext))
+  (define-key helm-read-file-map (kbd "<backspace>") 'helm-find-files-up-one-level)
+  (define-key helm-find-files-map (kbd "<backspace>") 'helm-find-files-up-one-level)
+  :bind (("M-x"     . helm-M-x)
+        ("C-x C-f" . helm-find-files)
+        ("C-x b"   . helm-mini)     ;; See buffers & recent files; more useful.
+        ("C-x r b" . helm-filtered-bookmarks)
+        ("C-x C-r" . helm-recentf)  ;; Search for recently edited files
+        ("C-c i"   . helm-imenu)
+        ("C-h a"   . helm-apropos)
+        ;; Look at what was cut recently & paste it in.
+        ("M-y" . helm-show-kill-ring)
+
+        :map helm-map
+        ;; We can list ‘actions’ on the currently selected item by C-z.
+        ("C-z" . helm-select-action)
+        ;; Let's keep tab-completetion anyhow.
+        ("TAB"   . helm-execute-persistent-action)
+        ("<tab>" . helm-execute-persistent-action))
+)
+#+END_SRC
+
+Helm Swoop for searching
+#+BEGIN_SRC emacs-lisp
+(use-package helm-swoop
+:ensure t
+:bind (("C-s" . helm-swoop)
+       ("C-r" . helm-swoop))
+)
+#+END_SRC
+
+** COMMENT Ivy, Swiper and Counsel
 
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
@@ -721,7 +770,7 @@ Shackle might be worth a try, but I'd like to get the rest sorted out first.
   (global-set-key (kbd "M-x") 'counsel-M-x)
   (global-set-key (kbd "M-y") 'counsel-yank-pop)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-  (setq counsel-find-file-ignore-regexp "\\.\(elc\|aux\|fdb_latexmk\|fls\|bcf\|ilg\|ind\|log\|out\|blg\|run\\.xml\|toc\|script\|idx\|figlist\)\\'"))
+  (setq counsel-find-file-ignore-regexp "\\.\\(elc\\|aux\\|auxlock\\|bbl\\|bcf\\|blg\\|cb2?\\|fdb_latexmk\\|fls\\|idx\\|ilg\\|ind\\|log\\|out\\|run.xml\\|synctex.gz\\|toc\\|xsim\\|script\\|table\\|figlist\\)\\'"))
 ;(use-package smex)
 ;(use-package flx)
 ;(use-package avy)
@@ -811,6 +860,20 @@ Magit is the git interface for emacs
   :bind (("C-x g" . magit-status)))
 #+END_SRC
 
+** Ediff
+see https://oremacs.com/2015/01/17/setting-up-ediff/
+#+BEGIN_SRC emacs-lisp
+(defmacro csetq (variable value)
+  `(funcall (or (get ',variable 'custom-set)
+                'set-default)
+            ',variable ,value))
+(csetq ediff-window-setup-function 'ediff-setup-windows-plain)
+(csetq ediff-split-window-function 'split-window-horizontally)
+(csetq ediff-diff-options "-w")
+;; only highlight the current diff:
+(setq-default ediff-highlight-all-diffs 'nil)
+#+END_SRC
+
 ** Programming
 
 Here are all the packages needed for programming languages and formats.
@@ -837,14 +900,20 @@ Markdown mode is activated for .md and .markdown files. It includes pandoc mode 
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
  :ensure t
- :mode "\\.\\(md\\|markdown\\)\\'"
- :config
- (use-package pandoc-mode :init
- )
- (add-hook 'markdown-mode-hook (lambda ()
- (auto-fill-mode nil)
- (turn-on-visual-line-mode)
- (pandoc-mode))))
+ :mode (("README\\.md\\'" . gfm-mode)
+        ("\\md\\'" . markdown-mode)
+        ("\\markdown\\'" . markdown-mode))
+ :init (setq markdown-command "multimarkdown"))
+ (use-package pandoc-mode
+  :ensure t
+  :init (add-hook 'markdown-mode-hook (lambda ()
+                                        (auto-fill-mode nil)
+                                        (turn-on-visual-line-mode)
+                                        (pandoc-mode))))
+ (use-package markdown-preview-mode
+  :ensure t
+  :init (setq markdown-enable-math t)
+  :config (add-to-list 'markdown-preview-javascript "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"))
 #+END_SRC
 
 ** Org-Mode
@@ -900,6 +969,7 @@ Configure AucTeX and company-mode-auctex
      '("align*" LaTeX-env-label)
      '("pNiceMatrix" LaTeX-env-label)
      '("pNiceArray" LaTeX-env-label)
+     '("NiceArray" LaTeX-env-label)
      '("equation*" LaTeX-env-label)))
   :bind (("C-c C-ö" . next-error)
          ("<C-return>" . LaTeX-insert-item)
