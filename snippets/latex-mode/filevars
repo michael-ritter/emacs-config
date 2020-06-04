@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: filevars
+# key: filevars
+# --
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-engine: luatex
+%%% TeX-command-extra-options: "-shell-escape"
+%%% ispell-local-dictionary: "american"
+%%% TeX-master: t
+%%% End:
