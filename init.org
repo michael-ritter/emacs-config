@@ -217,10 +217,19 @@ Moe theme is available at https://github.com/kuanyui/moe-theme.el
 #+END_SRC
 *** Solarized Dark Theme
 #+BEGIN_SRC emacs-lisp
-(load-theme 'solarized-dark t)
+(use-package solarized-theme
+:ensure t
+:config
+(setq solarized-distinct-fringe-background t)
 (setq solarized-use-variable-pitch nil)
 (setq solarized-scale-org-headlines nil)
+(load-theme 'solarized-dark t))
 #+END_SRC
+
+#+RESULTS:
+: t
+
+*** 
 ** Mode Line: Doom Modeline
 
 Doom Modeline from https://github.com/seagle0128/doom-modeline
