@@ -184,22 +184,27 @@ Moe theme is available at https://github.com/kuanyui/moe-theme.el
 *** COMMENT SF Mono font, remove the cruft and make the initial size bigger.
 
 #+BEGIN_SRC emacs-lisp
-(set-face-attribute 'default nil :font "SF Mono 14")
-;(setq-default line-spacing 0)
-;; Ligatures in Emacs
-;; https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
-(mac-auto-operator-composition-mode t)
-(setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
+(when (string= system-type "darwin")
+  (set-face-attribute 'default nil :font "SF Mono 14")
+                                        ;(setq-default line-spacing 0)
+  ;; Ligatures in Emacs
+  ;; https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
+
+  (mac-auto-operator-composition-mode t)
+  (setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
+)
 #+END_SRC
 
 *** Fira Code font with ligatures
 
 #+BEGIN_SRC emacs-lisp
-(set-face-attribute 'default nil :font "Fira Code 14")
-(setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
-;; Ligatures in Emacs
-;; https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
-(mac-auto-operator-composition-mode)
+(when (string= system-type "darwin")
+  (set-face-attribute 'default nil :font "Fira Code 14")
+  (setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
+  ;; Ligatures in Emacs
+  ;; https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
+  (mac-auto-operator-composition-mode)
+)
 #+END_SRC
 
 *** COMMENT JetBrains Mono Font
@@ -225,11 +230,6 @@ Moe theme is available at https://github.com/kuanyui/moe-theme.el
 (setq solarized-scale-org-headlines nil)
 (load-theme 'solarized-dark t))
 #+END_SRC
-
-#+RESULTS:
-: t
-
-*** 
 ** Mode Line: Doom Modeline
 
 Doom Modeline from https://github.com/seagle0128/doom-modeline
