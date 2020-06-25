@@ -77,12 +77,13 @@ Install use-package.
 Emacs control is Ctrl. Emacs Meta is Command. Mac "option" key is unmodified. Function key is Emacs super.
 
 #+BEGIN_SRC emacs-lisp
-(setq mac-control-modifier 'control)
-(setq mac-option-modifier 'nil)
-(setq mac-command-modifier 'meta)
-(setq mac-right-command-modifier 'meta)
-(setq mac-right-option-modifier 'nil)
-(setq ns-function-modifier 'super)
+(when (string= system-type "darwin")
+  (setq mac-control-modifier 'control)
+  (setq mac-option-modifier 'nil)
+  (setq mac-command-modifier 'meta)
+  (setq mac-right-command-modifier 'meta)
+  (setq mac-right-option-modifier 'nil)
+  (setq ns-function-modifier 'super))
 #+END_SRC
 
 ** Meta
@@ -213,7 +214,9 @@ Moe theme is available at https://github.com/kuanyui/moe-theme.el
 (setq initial-frame-alist '((top . 10) (left . 10) (width . 125) (height . 45)))
 ;; Ligatures in Emacs
 ;; https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
-(mac-auto-operator-composition-mode)
+(when (string= system-type "darwin")
+  (mac-auto-operator-composition-mode)
+)
 #+END_SRC
 
 *** COMMENT Ayu Theme
