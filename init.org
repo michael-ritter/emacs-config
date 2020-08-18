@@ -33,7 +33,7 @@ If necessary, set the git flag =--skip-worktree= on ==init.el=. The effect is to
 
 #+BEGIN_SRC
 git update-index --skip-worktree init.el
-#+END_SRC
+#+End_SRC
 
 On the first run Emacs will install some packages. It's best to restart Emacs after that process is done for the first time.
 
@@ -526,8 +526,7 @@ Use M-< and M-> to move to beginning and end of buffer.
   (global-set-key (kbd "C-e") 'mwim-end))
 #+END_SRC
 
-
-
+**** COMMENT smart home / smart end (superseded by mwim)
 #+BEGIN_SRC emacs-lisp
 (defun emacs-smart-home ()
   "Move between beginnings of visual lines, first non-blank character in the logical line and start of the logical line."
@@ -611,12 +610,6 @@ Multiple cusors are a must. Make <return> insert a newline; multiple-cursors-mod
   (define-key mc/keymap (kbd "<return>") nil)
   (global-unset-key (kbd "M-<down-mouse-1>"))
   (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click))
-#+END_SRC
-
-Comment lines.
-
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "s-/") 'comment-line)
 #+END_SRC
 
 *** Smart Parens
@@ -725,8 +718,8 @@ Helm find files trick taken from https://notabug.org/stefano-m/.emacs.d/src/proj
 (use-package helm
   :ensure t
   :diminish
-  :custom
-  (helm-completion-style 'emacs)
+  ;:custom
+  ;(helm-completion-style 'emacs)
   :init (helm-mode t)
   :config
   (setq helm-ff-newfile-prompt-p nil
@@ -734,28 +727,30 @@ Helm find files trick taken from https://notabug.org/stefano-m/.emacs.d/src/proj
         ;helm-ff-ido-style-backspace 'always
         helm-ff-auto-update-initial-value t
         helm-ff--auto-update-state t
-        completion-styles '(helm-flex)); set to '(flex) instead of '(helm-flex) on emacs 27)
+        ;;completion-styles '(helm-flex); set to '(flex) instead of '(helm-flex) on emacs 27)
+        )
   (cl-loop for ext in '("\\.elc$" "\\.py[cod]$" "\\.aux$" "\\.auxlock$" "\\.bbl$" "\\.bcf$" "\\.blg$" "\\.cb2?$" "\\.fdb_latexmk$" "\\.fls$" "\\.idx$" "\\.ilg$" "\\.ind$" "\\.log$" "\\.out$" "\\.run\\.xml$" "\\.synctex\\.gz$" "\\.toc$" "\\.xsim$" "\\.script$" "\\.table$" "\\.figlist$")
            do (add-to-list 'helm-boring-file-regexp-list ext))
   (define-key helm-read-file-map (kbd "<backspace>") 'helm-find-files-up-one-level)
   (define-key helm-find-files-map (kbd "<backspace>") 'helm-find-files-up-one-level)
-  :bind (("M-x"     . helm-M-x)
-        ("C-x C-f" . helm-find-files)
-        ("C-x b"   . helm-mini)     ;; See buffers & recent files; more useful.
-        ("C-x r b" . helm-filtered-bookmarks)
-        ("C-x C-r" . helm-recentf)  ;; Search for recently edited files
-        ("C-c i"   . helm-imenu)
-        ("C-h a"   . helm-apropos)
-        ;; Look at what was cut recently & paste it in.
-        ("M-y" . helm-show-kill-ring)
-
+  :bind (
+	       ("M-x"     . helm-M-x)
+         ("C-x C-f" . helm-find-files)
+         ("C-x b"   . helm-mini)     ;; See buffers & recent files; more useful.
+         ("C-x r b" . helm-filtered-bookmarks)
+         ("C-x C-r" . helm-recentf)  ;; Search for recently edited files
+         ("C-c i"   . helm-imenu)
+         ("C-h a"   . helm-apropos)
+         ;; Look at what was cut recently & paste it in.
+         ("M-y" . helm-show-kill-ring)
+         
         :map helm-map
         ;; We can list ‘actions’ on the currently selected item by C-z.
         ("C-z" . helm-select-action)
         ;; Let's keep tab-completetion anyhow.
         ("TAB"   . helm-execute-persistent-action)
         ("<tab>" . helm-execute-persistent-action))
-)
+  )
 #+END_SRC
 
 Helm Swoop for searching
@@ -822,7 +817,7 @@ Enable spellcheck on the fly for all text modes. This includes org, latex and La
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
-** Autocompletion (Company-Mode)
+** COMMENT Autocompletion (Company-Mode)
 
 #+BEGIN_SRC emacs-lisp
 (use-package company

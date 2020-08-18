@@ -19,3 +19,4 @@ places
 /custom.el
 transient/**
 /projectile.cache
+*.swp
