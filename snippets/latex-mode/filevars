@@ -7,5 +7,6 @@
 %%% TeX-engine: luatex
 %%% TeX-command-extra-options: "-shell-escape"
 %%% ispell-local-dictionary: "american"
+%%% eval: (setenv "TEXINPUTS" ".//:")
 %%% TeX-master: t
 %%% End:
