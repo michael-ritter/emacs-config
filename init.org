@@ -519,6 +519,16 @@ Use M-< and M-> to move to beginning and end of buffer.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
+(use-package mwim
+  :ensure t
+  :config
+  (global-set-key (kbd "C-a") 'mwim-beginning)
+  (global-set-key (kbd "C-e") 'mwim-end))
+#+END_SRC
+
+
+
+#+BEGIN_SRC emacs-lisp
 (defun emacs-smart-home ()
   "Move between beginnings of visual lines, first non-blank character in the logical line and start of the logical line."
   (interactive)
@@ -558,8 +568,8 @@ Use M-< and M-> to move to beginning and end of buffer.
           (setq visual-pos (point))))
     (goto-char (min visual-pos text-pos))))
 
-(global-set-key (kbd "C-a") 'emacs-smart-home)
-(global-set-key (kbd "C-e") 'emacs-smart-end)
+;(global-set-key (kbd "C-a") 'emacs-smart-home)
+;(global-set-key (kbd "C-e") 'emacs-smart-end)
 #+END_SRC
 
 *** Expand Region
