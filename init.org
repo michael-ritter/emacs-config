@@ -731,7 +731,7 @@ Helm find files trick taken from https://notabug.org/stefano-m/.emacs.d/src/proj
   :config
   (setq helm-ff-newfile-prompt-p nil
         helm-ff-skip-boring-files t
-        helm-ff-ido-style-backspace 'always
+        ;helm-ff-ido-style-backspace 'always
         helm-ff-auto-update-initial-value t
         helm-ff--auto-update-state t
         completion-styles '(helm-flex)); set to '(flex) instead of '(helm-flex) on emacs 27)
