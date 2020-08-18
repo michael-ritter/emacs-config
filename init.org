@@ -973,6 +973,8 @@ Configure AucTeX and company-mode-auctex
   (setq TeX-PDF-mode-parsed t)
   (setq TeX-parse-self t)
   (setq-default TeX-master nil)
+  (with-eval-after-load "tex"
+    (add-to-list 'TeX-file-extensions "tikz" t))
   (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
   (setq TeX-view-program-list '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
   (add-hook 'LaTeX-mode-hook (lambda ()
