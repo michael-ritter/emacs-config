@@ -444,6 +444,12 @@ https://github.com/wasamasa/eyebrowse
 #+END_SRC
 
 * Basic Configuration
+** Hydra
+#+BEGIN_SRC emacs-lisp
+(use-package hydra
+  :ensure t
+)
+#+END_SRC
 ** Diminish
 Do not show some common modes in the modeline, to save space
 
