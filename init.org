@@ -312,6 +312,24 @@ Show full path in the title bar.
 (setq-default frame-title-format "%b (%f)")
 #+END_SRC
 
+** Tab Bar
+#+BEGIN_SRC emacs-lisp
+(use-package centaur-tabs
+  :demand
+  :config
+  (centaur-tabs-mode t)
+  (centaur-tabs-headline-match)
+  (setq centaur-tabs-style "bar")
+  (setq centaur-tabs-height 32)
+  (setq centaur-tabs-set-icons t)
+  (setq centaur-tabs-set-bar 'under)
+  (setq x-underline-at-descent-line t)
+  (setq centaur-tabs-set-modified-marker t)
+  :bind
+  ("C-<prior>" . centaur-tabs-backward)
+  ("C-<prior>" . centaur-tabs-forward)
+)
+#+END_SRC
 ** Spaces, Tabs and Indents
 Never use tabs, use spaces instead. Configure default indent to 2 spaces.
 
