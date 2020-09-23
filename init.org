@@ -162,7 +162,7 @@ This helps get rid of =functions might not be defined at runtime= warnings. See 
 
 #+END_SRC
 
-*** Set moe and tsdh-light as standard themes.
+*** COMMENT Set moe and tsdh-light as standard themes.
 
 Moe theme is available at https://github.com/kuanyui/moe-theme.el
 #+BEGIN_SRC emacs-lisp
@@ -180,6 +180,23 @@ Moe theme is available at https://github.com/kuanyui/moe-theme.el
   ;; Choose a color for mode-line.(Default: blue)
   (load-theme 'tsdh-light))
 
+#+END_SRC
+*** COMMENT Set modus-operandi (light) and modus-vivendi (dark) as standard themes.
+
+#+BEGIN_SRC emacs-lisp
+(use-package modus-vivendi 
+  :ensure t
+  :config
+  )
+(use-package modus-operandi
+  :ensure t
+  :config
+)
+;; Load a dark theme if in GUI, load a light theme if in NW
+(if (display-graphic-p)
+    (load-theme 'modus-vivendi)
+  ;; Choose a color for mode-line.(Default: blue)
+  (load-theme 'modus-operandi))
 #+END_SRC
 
 *** COMMENT SF Mono font, remove the cruft and make the initial size bigger.
@@ -704,24 +721,17 @@ Opens the file the cursor is positioned on.
 
 ** Windows
 
-I'm still not happy with the way new windows are spawned. For now, at least, let's make it so that new automatic windows are always created on the bottom, not on the side.
-
-#+BEGIN_SRC emacs-lisp
-;; (setq split-height-threshold 0)
-;; (setq split-width-threshold nil)
-#+END_SRC
-
 Move between windows with Meta-Shift-Arrow. Does not work in org-mode, as that captures all usefull arrow combinations :-(.
 
-#+BEGIN_SRC emacs-lisp
-(use-package windmove
-  :config
-  (global-set-key (kbd "M-S-<right>")  'windmove-right)
-  (global-set-key (kbd "M-S-<left>")  'windmove-left)
-  (global-set-key (kbd "M-S-<up>")  'windmove-up)
-  (global-set-key (kbd "M-S-<down>")  'windmove-down)
-)
-#+END_SRC
+;; #+BEGIN_SRC emacs-lisp
+;; (use-package windmove
+;;  :config
+;;  (global-set-key (kbd "M-S-<right>")  'windmove-right)
+;;  (global-set-key (kbd "M-S-<left>")  'windmove-left)
+;;  (global-set-key (kbd "M-S-<up>")  'windmove-up)
+;;  (global-set-key (kbd "M-S-<down>")  'windmove-down)
+;; )
+;; #+END_SRC
 
 change buffer names for files with the same names
 
@@ -731,9 +741,24 @@ change buffer names for files with the same names
       uniquify-buffer-name-style 'forward) ;; names/in/this/style
 #+END_SRC
 
-** Shackle
+** Buffer Management
+Use bufler for buffer management
 
-Shackle might be worth a try, but I'd like to get the rest sorted out first.
+#+begin_src emacs-lisp
+;; from https://cestlaz.github.io/post/using-emacs-75-bufler/
+;; display buffer overview "full screen"
+(defun mz/bufler-one-window (&optional force-refresh)
+  (interactive "P")
+  (bufler-list)
+  (delete-other-windows)
+)
+(use-package bufler
+:ensure t
+:config 
+(global-set-key (kbd "C-x b") 'bufler-switch-buffer)
+(global-set-key (kbd "C-x C-b") 'mz/bufler-one-window)
+)
+#+end_src
 
 ** Helm
 Helm find files trick taken from https://notabug.org/stefano-m/.emacs.d/src/projectile/init.d/helm.cfg.el.
@@ -767,7 +792,7 @@ Helm find files trick taken from https://notabug.org/stefano-m/.emacs.d/src/proj
          ("C-h a"   . helm-apropos)
          ;; Look at what was cut recently & paste it in.
          ("M-y" . helm-show-kill-ring)
-         
+
         :map helm-map
         ;; We can list ‘actions’ on the currently selected item by C-z.
         ("C-z" . helm-select-action)
@@ -996,6 +1021,24 @@ Configure AucTeX and company-mode-auctex
     (add-to-list 'TeX-file-extensions "tikz" t))
   (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
   (setq TeX-view-program-list '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+  ;; compilation status
+  (setq last-latex-compilation-status "No Compilation")
+  (setq-default mode-line-format (append mode-line-format '((:eval (last-latex-compilation-status-update nil)))))
+
+  (defun last-latex-compilation-status-update (arg)
+    "Update the string that holds the status of the last latex compilation"
+    (setq last-latex-compilation-status
+          (save-excursion
+            (set-buffer "*Messages*")
+            (goto-char (point-max))
+            (if (search-backward-regexp "^LaTeX\\(.*\\)$" nil t nil)
+                (let ((compilationstatus (match-string 1)))
+                  (cond
+                   ((string-match "successfully" compilationstatus) (propertize "Success" 'font-lock-face '(:background "green")))
+                   ((string-match "errors" compilationstatus) (propertize "Error" 'font-lock-face '(:foreground "red")))
+                   ((string-match "unresolved" compilationstatus) (propertize "Unresolved" 'font-lock-face '(:foreground "blue")))
+                   (t "No Compilation")))))))
+  ;;
   (add-hook 'LaTeX-mode-hook (lambda ()
                                (local-unset-key "\"")
                                (turn-on-reftex)
