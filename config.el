@@ -65,3 +65,10 @@
   (setq ns-function-modifier 'super)
   (mac-auto-operator-composition-mode t)
   )
+
+;; Move backward / forward one word with C-left/right
+(global-set-key (kbd "C-<right>") 'forward-word)
+(global-set-key (kbd "C-<left>") 'backward-word)
+;; Kill word forward / backward with C-backspace and C-s-backspace (remember, super is fn)
+(global-set-key (kbd "C-<backspace>") 'backward-kill-word)
+(global-set-key (kbd "C-s-<backspace>") 'kill-word)
