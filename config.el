@@ -22,7 +22,7 @@
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
  (setq doom-font (font-spec :family "Fira Code" :size 14 :weight 'semi-light)
-       doom-variable-pitch-font (font-spec :family "SF Pro Display" :size 14))
+       doom-variable-pitch-font (font-spec :family "Overpass" :size 14))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -66,9 +66,50 @@
   (mac-auto-operator-composition-mode t)
   )
 
+;; set theme
+(use-package! modus-operandi-theme
+  :init
+  ;; code here will run immediately
+  :config
+  ;; code here will run after the package is loaded
+  ;(load-theme 'modus-operandi t)
+  (load-theme 'modus-vivendi t)
+ )
+
+(use-package! dimmer
+  :custom (dimmer-fraction 0.1)
+  :config (dimmer-mode)
+)
+
+(use-package! multiple-cursors
+  :init
+        (setq mc/always-run-for-all t)
+  :config
+        (add-to-list 'mc/unsupported-minor-modes 'lispy-mode)
+  :bind (("C-c m m" . mc/edit-lines)
+         ("C-c m d" . mc/mark-all-like-this-dwim)
+         ("C-c m >" . mc/mark-next-like-this)
+         )
+)
+
+;; keybindings
 ;; Move backward / forward one word with C-left/right
-(global-set-key (kbd "C-<right>") 'forward-word)
-(global-set-key (kbd "C-<left>") 'backward-word)
-;; Kill word forward / backward with C-backspace and C-s-backspace (remember, super is fn)
-(global-set-key (kbd "C-<backspace>") 'backward-kill-word)
-(global-set-key (kbd "C-s-<backspace>") 'kill-word)
+(map! :after smartparens
+      :map smartparens-mode-map
+      [C-right] nil
+      [C-left] nil)
+(map!
+ [C-right] 'forward-word
+ "<C-left>" 'backward-word
+ "<C-backspace>" 'backward-kill-word
+ "<C-s-backspace>" 'kill-word
+ )
+
+(map! :after latex
+      "C-c C-ö" 'next-error
+)
+
+(setq
+ auto-save-default t
+ )
+(global-subword-mode 1) ; Iterate through CamelCase words

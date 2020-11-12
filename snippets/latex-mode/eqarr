@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: equation nicearray
+# key: eqarr
+# --
+\begin{NiceArray}[t]{@{}*{${1:columns}}{c@{}}}
+    ${2:equations}
+\end{NiceArray}

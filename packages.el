@@ -48,3 +48,10 @@
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
+
+;; modus themes
+(package! modus-operandi-theme)
+(package! modus-vivendi-theme)
+(package! kaolin-themes)
+
+(package! dimmer)
