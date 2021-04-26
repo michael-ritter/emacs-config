@@ -66,21 +66,6 @@
   (mac-auto-operator-composition-mode t)
   )
 
-;; set theme
-(use-package! modus-operandi-theme
-  :init
-  ;; code here will run immediately
-  :config
-  ;; code here will run after the package is loaded
-  ;(load-theme 'modus-operandi t)
-  (load-theme 'modus-vivendi t)
- )
-
-(use-package! dimmer
-  :custom (dimmer-fraction 0.1)
-  :config (dimmer-mode)
-)
-
 (use-package! multiple-cursors
   :init
         (setq mc/always-run-for-all t)
@@ -107,9 +92,67 @@
 
 (map! :after latex
       "C-c C-ö" 'next-error
+      "#" 'cdlatex-math-symbol
 )
 
 (setq
  auto-save-default t
  )
 (global-subword-mode 1) ; Iterate through CamelCase words
+
+; selectrum, prescient, consult, marginalia
+
+(use-package! selectrum
+  :defer t
+  :config
+  ;(map! :map selectrum-minibuffer-map
+  ;      :in "C-j" #'selectrum-next-candidate
+  ;      )
+)
+(use-package! prescient
+  :config (prescient-persist-mode +1)
+  :after selectrum
+  )
+
+(use-package! selectrum-prescient
+  :after selectrum
+  :defer t
+)
+
+(use-package! marginalia
+  :init (marginalia-mode))
+
+(use-package! consult
+  :after projectile
+  ;; Replace bindings
+   :bind (("C-c o" . consult-outline)
+          ("C-x b" . consult-buffer))
+  ;;        ("M-g o" . consult-outline) ;; "M-s o" is a good alternative
+  ;;        ("M-g l" . consult-line)    ;; "M-s l" is a good alternative
+  ;;        ("M-s m" . consult-multi-occur)
+  ;;        ("M-y" . consult-yank-pop)
+  ;; :init
+  ;; Replace functions (consult-multi-occur is a drop-in replacement)
+  ;; (fset 'multi-occur #'consult-multi-occur)
+
+  :config
+  (projectile-load-known-projects)
+  (consult-annotate-mode)
+  (consult-preview-mode) ;; Optionally enable previews
+ )
+
+;; ctrlf search: https://github.com/raxod502/ctrlf
+(use-package! ctrlf
+  :init (ctrlf-mode))
+
+  ;; Projectile defaults to forcing icomplete instead of completing-read
+(after! projectile
+  (setq projectile-completion-system 'default))
+
+(add-hook! '(doom-first-input-hook)
+  (selectrum-mode +1)
+  (selectrum-prescient-mode +1)
+  (company-prescient-mode +1)
+  (prescient-persist-mode +1)
+  (marginalia-mode +1)
+  (selectrum-prescient-mode +1))

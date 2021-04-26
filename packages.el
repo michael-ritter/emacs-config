@@ -52,6 +52,13 @@
 ;; modus themes
 (package! modus-operandi-theme)
 (package! modus-vivendi-theme)
-(package! kaolin-themes)
+;; (package! kaolin-themes)
 
-(package! dimmer)
+
+;(package! good-scroll)
+(package! selectrum)
+(package! prescient)
+(package! selectrum-prescient)
+(package! marginalia)
+(package! consult)
+(package! ctrlf)
