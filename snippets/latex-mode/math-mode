@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: math-mode
+# uuid: math mode
+# key: ma
+# condition: t
+# --
+\\( ${1} \\)

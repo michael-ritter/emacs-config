@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: rowvec
+# uuid: rowvec
+# key: rv
+# condition: t
+# --
+\rowvec{${}}

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: colvec
+# uuid: colvec
+# key: cv
+# condition: t
+# --
+\colvec{${}}

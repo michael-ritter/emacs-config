@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: colvec-transposed
+# uuid: colvec-transposed
+# key: cvt
+# condition: t
+# --
+\colvec*{${}}

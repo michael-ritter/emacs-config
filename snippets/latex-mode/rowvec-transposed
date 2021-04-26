@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: rowvec-transposed
+# uuid: rowvec-transposed
+# key: rvt
+# condition: t
+# --
+\rowvec*{}

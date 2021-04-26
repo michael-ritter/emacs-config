@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: task
+# uuid: task
+# key: *
+# condition: t
+# --
+\\task%
