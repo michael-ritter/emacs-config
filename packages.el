@@ -52,10 +52,8 @@
 ;; modus themes
 (package! modus-operandi-theme)
 (package! modus-vivendi-theme)
-;; (package! kaolin-themes)
 
-
-;(package! good-scroll)
+;; selectrun & co
 (package! selectrum)
 (package! prescient)
 (package! selectrum-prescient)
