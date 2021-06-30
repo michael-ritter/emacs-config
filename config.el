@@ -137,8 +137,6 @@
 
   :config
   (projectile-load-known-projects)
-  (consult-annotate-mode)
-  (consult-preview-mode) ;; Optionally enable previews
  )
 
 ;; ctrlf search: https://github.com/raxod502/ctrlf
@@ -152,7 +150,6 @@
 (add-hook! '(doom-first-input-hook)
   (selectrum-mode +1)
   (selectrum-prescient-mode +1)
-  (company-prescient-mode +1)
   (prescient-persist-mode +1)
   (marginalia-mode +1)
   (selectrum-prescient-mode +1))
