@@ -50,8 +50,7 @@
 ;(unpin! t)
 
 ;; modus themes
-(package! modus-operandi-theme)
-(package! modus-vivendi-theme)
+(package! modus-themes)
 
 ;; selectrun & co
 (package! selectrum)
