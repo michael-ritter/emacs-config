@@ -4,4 +4,4 @@
 # key: rvt
 # condition: t
 # --
-\rowvec*{}
+\rowvec*{${}}
