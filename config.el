@@ -100,24 +100,21 @@
  )
 (global-subword-mode 1) ; Iterate through CamelCase words
 
-; selectrum, prescient, consult, marginalia
+;; vertico, orderlss, consult, marginalia, embark
+(use-package! vertico
+  :init
+  (vertico-mode +1))
 
-(use-package! selectrum
-  :defer t
-  :config
-  ;(map! :map selectrum-minibuffer-map
-  ;      :in "C-j" #'selectrum-next-candidate
-  ;      )
-)
-(use-package! prescient
-  :config (prescient-persist-mode +1)
-  :after selectrum
-  )
+(use-package! orderless
+  :init
+  (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
 
-(use-package! selectrum-prescient
-  :after selectrum
-  :defer t
-)
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
 
 (use-package! marginalia
   :init (marginalia-mode))
@@ -126,8 +123,17 @@
   :after projectile
   ;; Replace bindings
    :bind (("C-c o" . consult-outline)
-          ("C-x b" . consult-buffer))
-  ;;        ("M-g o" . consult-outline) ;; "M-s o" is a good alternative
+          ("C-x b" . consult-buffer)
+          ("M-y" . consult-yank-from-kill-ring)))
+
+(use-package! embark
+  :ensure t
+
+  :bind
+  (("C-;" . embark-act)))
+
+
+   ;;        ("M-g o" . consult-outline) ;; "M-s o" is a good alternative
   ;;        ("M-g l" . consult-line)    ;; "M-s l" is a good alternative
   ;;        ("M-s m" . consult-multi-occur)
   ;;        ("M-y" . consult-yank-pop)
@@ -135,21 +141,44 @@
   ;; Replace functions (consult-multi-occur is a drop-in replacement)
   ;; (fset 'multi-occur #'consult-multi-occur)
 
-  :config
-  (projectile-load-known-projects)
- )
+(setq completion-ignore-case t)
+(setq read-file-name-completion-ignore-case t)
+
+
+
+;;
+; selectrum, prescient, consult, marginalia
+
+;;(use-package! selectrum
+;;  :defer t
+;;  :config
+;;  ;(map! :map selectrum-minibuffer-map
+;;  ;      :in "C-j" #'selectrum-next-candidate
+;;  ;      )
+;;)
+;;(use-package! prescient
+;;  :config (prescient-persist-mode +1)
+;;  :after selectrum
+;;  )
+
+;;(use-package! selectrum-prescient
+;;  :after selectrum
+;;  :defer t
+;;)
+
+
 
 ;; ctrlf search: https://github.com/raxod502/ctrlf
-(use-package! ctrlf
-  :init (ctrlf-mode))
+;; (use-package! ctrlf
+;;   :init (ctrlf-mode))
 
   ;; Projectile defaults to forcing icomplete instead of completing-read
 (after! projectile
   (setq projectile-completion-system 'default))
 
 (add-hook! '(doom-first-input-hook)
-  (selectrum-mode +1)
-  (selectrum-prescient-mode +1)
-  (prescient-persist-mode +1)
-  (marginalia-mode +1)
-  (selectrum-prescient-mode +1))
+  ;; (selectrum-mode +1)
+  ;; (selectrum-prescient-mode +1)
+  ;; (prescient-persist-mode +1)
+  (marginalia-mode +1))
+  ;; (selectrum-prescient-mode +1))

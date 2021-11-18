@@ -53,9 +53,13 @@
 (package! modus-themes)
 
 ;; selectrun & co
-(package! selectrum)
-(package! prescient)
-(package! selectrum-prescient)
+;;(package! selectrum)
+;;(package! prescient)
+;;(package! selectrum-prescient)
+(package! vertico)
+(package! orderless)
 (package! marginalia)
 (package! consult)
-(package! ctrlf)
+(package! embark)
+(package! savehist)
+;;(package! ctrlf)
